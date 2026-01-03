@@ -1,0 +1,160 @@
+# Cron Job Examples
+# Edit with: crontab -e
+# Format: minute hour day month weekday command
+#
+# minute:  0-59
+# hour:    0-23
+# day:     1-31
+# month:   1-12
+# weekday: 0-7 (0 and 7 are Sunday)
+#
+# Special characters:
+# *  - any value
+# ,  - value list separator
+# -  - range of values
+# /  - step values
+
+# ============================================
+# SYSTEM MONITORING
+# ============================================
+
+# Run monitoring script every 5 minutes
+*/5 * * * * /home/admin/scripts/monitor.sh --log >> /var/log/monitoring.log 2>&1
+
+# Health check every 10 minutes
+*/10 * * * * /home/admin/scripts/health-check.sh >> /var/log/health-check.log 2>&1
+
+# Generate daily system report at 6 AM
+0 6 * * * /home/admin/scripts/system-info.sh > /var/log/daily-report-$(date +\%Y\%m\%d).txt
+
+# ============================================
+# BACKUPS
+# ============================================
+
+# Full backup daily at 2 AM
+0 2 * * * /home/admin/scripts/backup.sh --full >> /var/log/backup.log 2>&1
+
+# Incremental backup every 4 hours
+0 */4 * * * /home/admin/scripts/backup.sh --incremental >> /var/log/backup.log 2>&1
+
+# Database backup at 3 AM
+0 3 * * * /home/admin/scripts/backup.sh --db >> /var/log/backup.log 2>&1
+
+# Configuration backup weekly (Sunday at 1 AM)
+0 1 * * 0 /home/admin/scripts/backup.sh --config >> /var/log/backup.log 2>&1
+
+# ============================================
+# SYSTEM MAINTENANCE
+# ============================================
+
+# Update package cache daily at 5 AM
+0 5 * * * apt update >> /var/log/apt-update.log 2>&1
+
+# Clean old log files weekly (Sunday at 4 AM)
+0 4 * * 0 find /var/log -name "*.log" -mtime +30 -delete
+
+# Clean temporary files daily at midnight
+0 0 * * * find /tmp -type f -atime +7 -delete
+
+# Rotate logs weekly
+0 0 * * 0 /usr/sbin/logrotate /etc/logrotate.conf
+
+# ============================================
+# SECURITY
+# ============================================
+
+# Check for security updates daily at 4 AM
+0 4 * * * apt list --upgradable 2>&1 | grep -i security | mail -s "Security Updates Available" admin@example.com
+
+# Review failed login attempts daily at 7 AM
+0 7 * * * grep "Failed password" /var/log/auth.log | tail -50 | mail -s "Failed Login Report" admin@example.com
+
+# Update fail2ban rules daily at 3 AM
+0 3 * * * fail2ban-client reload
+
+# ============================================
+# DATABASE MAINTENANCE
+# ============================================
+
+# Optimize MySQL databases weekly (Sunday at 5 AM)
+0 5 * * 0 mysqlcheck -u root -p'password' --optimize --all-databases >> /var/log/mysql-optimize.log 2>&1
+
+# Clean MySQL binary logs older than 7 days (daily at 4 AM)
+0 4 * * * mysql -u root -p'password' -e "PURGE BINARY LOGS BEFORE DATE_SUB(NOW(), INTERVAL 7 DAY);"
+
+# ============================================
+# APPLICATION SPECIFIC
+# ============================================
+
+# Restart application service weekly (Sunday at 2 AM)
+0 2 * * 0 systemctl restart myapp.service
+
+# Clear application cache daily at 1 AM
+0 1 * * * rm -rf /var/cache/myapp/*
+
+# Generate application reports monthly (1st day at 8 AM)
+0 8 1 * * /opt/myapp/generate-report.sh
+
+# ============================================
+# MONITORING & ALERTS
+# ============================================
+
+# Check disk space hourly, alert if > 80%
+0 * * * * [ $(df / | awk 'NR==2 {print $5}' | sed 's/%//') -gt 80 ] && echo "Disk usage critical" | mail -s "Disk Alert" admin@example.com
+
+# Check service status every 15 minutes
+*/15 * * * * systemctl is-active --quiet nginx || echo "Nginx down" | mail -s "Service Alert" admin@example.com
+
+# Monitor CPU usage hourly
+0 * * * * [ $(top -bn1 | grep "Cpu(s)" | awk '{print $2}' | cut -d'%' -f1 | cut -d'.' -f1) -gt 80 ] && echo "High CPU" | mail -s "CPU Alert" admin@example.com
+
+# ============================================
+# CLOUD PROVIDER SPECIFIC
+# ============================================
+
+# AWS: Create EBS snapshot daily at 3 AM
+# 0 3 * * * aws ec2 create-snapshot --volume-id vol-xxxxx --description "Daily backup $(date +\%Y\%m\%d)"
+
+# GCP: Create disk snapshot daily at 3 AM
+# 0 3 * * * gcloud compute disks snapshot disk-name --snapshot-names=backup-$(date +\%Y\%m\%d) --zone=us-central1-a
+
+# ============================================
+# CUSTOM TASKS
+# ============================================
+
+# Example: Run custom script every weekday at 9 AM
+# 0 9 * * 1-5 /home/admin/scripts/custom-task.sh
+
+# Example: Run at specific times
+# 30 14 * * * /home/admin/scripts/afternoon-task.sh  # Daily at 2:30 PM
+
+# Example: Run on specific day of month
+# 0 0 1 * * /home/admin/scripts/monthly-task.sh  # 1st of every month at midnight
+
+# Example: Run multiple times per day
+# 0 8,12,18 * * * /home/admin/scripts/three-times-daily.sh  # 8 AM, 12 PM, 6 PM
+
+# ============================================
+# ENVIRONMENT VARIABLES
+# ============================================
+# Set environment variables for cron jobs:
+# SHELL=/bin/bash
+# PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+# MAILTO=admin@example.com
+
+# ============================================
+# NOTES
+# ============================================
+# - All cron output is emailed to the user unless redirected
+# - Use full paths for commands and scripts
+# - Redirect output to log files for debugging: >> /var/log/script.log 2>&1
+# - Test scripts manually before adding to cron
+# - Use @reboot to run commands at system startup
+# - Use @daily, @weekly, @monthly as shortcuts
+#
+# Examples of shortcuts:
+# @reboot    /home/admin/startup-script.sh
+# @daily     /home/admin/daily-task.sh
+# @weekly    /home/admin/weekly-task.sh
+# @monthly   /home/admin/monthly-task.sh
+# @yearly    /home/admin/yearly-task.sh

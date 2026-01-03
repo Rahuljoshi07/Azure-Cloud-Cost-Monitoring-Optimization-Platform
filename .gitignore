@@ -1,0 +1,53 @@
+# Backup files
+*.backup
+*.bak
+*~
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+tmp/
+temp/
+
+# Private keys and certificates
+*.key
+*.pem
+*.crt
+*.csr
+id_rsa
+id_rsa.pub
+
+# Database dumps
+*.sql
+*.sql.gz
+*.dump
+
+# Compressed archives
+*.tar.gz
+*.zip
+*.7z
+
+# Environment files
+.env
+.env.local
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Sensitive configuration
+configs/production/
+configs/*.prod.*
+
+# Backup directories (local development)
+/backup/
+/backups/
