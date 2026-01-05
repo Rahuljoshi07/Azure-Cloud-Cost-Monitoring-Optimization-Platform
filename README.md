@@ -1,9 +1,5 @@
 # Azure CI/CD Pipeline Project
 
-![Azure](https://img.shields.io/badge/Azure-0078D4?style=for-the-badge&logo=microsoft-azure&logoColor=white)
-![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
-![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
-
 ## 📋 Project Overview
 
 A production-ready web application demonstrating modern DevOps practices with automated CI/CD pipeline deployment to Microsoft Azure. This project showcases continuous integration, automated testing, and continuous deployment using GitHub Actions and Azure App Service.
@@ -189,12 +185,6 @@ npm run deploy
 ## 📄 License
 
 This project is licensed under the MIT License.
-
-## 👤 Author
-
-**Your Name**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- LinkedIn: [Your LinkedIn](https://linkedin.com/in/yourprofile)
 
 ## 🎓 Skills Demonstrated
 
