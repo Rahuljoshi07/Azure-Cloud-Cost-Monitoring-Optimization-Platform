@@ -184,7 +184,7 @@ npm run deploy
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is open source and free to use by anyone. Feel free to use, modify, and learn from this code for personal or commercial projects. 
 
 ## 🎓 Skills Demonstrated
 
