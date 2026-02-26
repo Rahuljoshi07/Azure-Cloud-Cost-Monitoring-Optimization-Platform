@@ -1,7 +1,8 @@
 -- Azure Cost Monitor Database Schema
 
--- Enable UUID extension
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- Note: uuid_generate_v4() compatibility is handled by the app layer.
+-- On real PostgreSQL, CREATE EXTENSION "uuid-ossp" is run first.
+-- On PGlite/embedded, gen_random_uuid() alias is created automatically.
 
 -- Users table
 CREATE TABLE IF NOT EXISTS users (

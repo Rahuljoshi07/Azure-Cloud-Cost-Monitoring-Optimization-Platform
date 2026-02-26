@@ -3,13 +3,11 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const cron = require('node-cron');
-const { pool } = require('./config/database');
+const { query, initDatabase } = require('./config/database');
 const { apiLimiter } = require('./middleware/rateLimiter');
 const { authenticate, authorize } = require('./middleware/auth');
 const { isAzureLive } = require('./services/azureCredential');
 const { runFullSync } = require('./services/dataSyncService');
-const fs = require('fs');
-const path = require('path');
 
 const app = express();
 
@@ -71,7 +69,7 @@ app.get('/api/config/auth', (req, res) => {
 
 app.get('/api/health', async (req, res) => {
   try {
-    await pool.query('SELECT 1');
+    await query('SELECT 1');
     res.json({
       status: 'healthy',
       timestamp: new Date().toISOString(),
@@ -83,19 +81,6 @@ app.get('/api/health', async (req, res) => {
     res.status(503).json({ status: 'unhealthy', database: 'disconnected' });
   }
 });
-
-// ─── Initialize database ─────────────────────────────────────────────────────
-
-const initDatabase = async () => {
-  try {
-    const sqlFile = path.join(__dirname, 'config', 'init-db.sql');
-    const sql = fs.readFileSync(sqlFile, 'utf8');
-    await pool.query(sql);
-    console.log('  Database initialized successfully');
-  } catch (error) {
-    console.error('  Database initialization error:', error.message);
-  }
-};
 
 // ─── Start server ────────────────────────────────────────────────────────────
 

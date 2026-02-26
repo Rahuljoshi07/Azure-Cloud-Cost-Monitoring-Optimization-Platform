@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { pool, query } = require('./src/config/database');
+const { query, initDatabase } = require('./src/config/database');
 const bcrypt = require('bcryptjs');
 const fs = require('fs');
 const path = require('path');
@@ -78,13 +78,10 @@ function generateResourceName(service, env, index) {
 async function seed() {
   console.log('\n  Seeding Azure Cost Monitor database...\n');
 
-  try {
-    // Initialize schema
-    const sqlFile = path.join(__dirname, 'src', 'config', 'init-db.sql');
-    const sql = fs.readFileSync(sqlFile, 'utf8');
-    await query(sql);
-    console.log('  [OK] Schema initialized');
+  // Initialize database (PGlite fallback + schema creation)
+  await initDatabase();
 
+  try {
     // Clear existing data
     await query('DELETE FROM cost_anomalies');
     await query('DELETE FROM usage_metrics');
@@ -408,7 +405,7 @@ async function seed() {
   } catch (error) {
     console.error('Seeding failed:', error);
   } finally {
-    await pool.end();
+    process.exit(0);
   }
 }
 

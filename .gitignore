@@ -16,3 +16,4 @@ tmpclaude-*
 .idea/
 *.tgz
 package-lock.json
+.pgdata/
