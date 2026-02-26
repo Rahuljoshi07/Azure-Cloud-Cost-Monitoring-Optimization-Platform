@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { reportAPI } from '../lib/api'
 import {
   FileText, Download, Plus, Calendar, TrendingUp, TrendingDown,
-  BarChart3, AlertTriangle, Clock
+  BarChart3, AlertTriangle, Clock, DollarSign, Activity
 } from 'lucide-react'
 import {
   AreaChart, Area, BarChart, Bar,
@@ -70,6 +70,16 @@ export default function Reports() {
     })) || [])
   ] : []
 
+  const severityBorderColor = (severity) => {
+    switch (severity) {
+      case 'critical': return 'border-l-4 border-l-red-500'
+      case 'high': return 'border-l-4 border-l-orange-500'
+      case 'medium': return 'border-l-4 border-l-amber-500'
+      case 'low': return 'border-l-4 border-l-emerald-500'
+      default: return 'border-l-4 border-l-surface-300'
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="page-header">
@@ -78,7 +88,7 @@ export default function Reports() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 p-1 bg-surface-100 dark:bg-surface-800 rounded-xl w-fit">
+      <div className="flex gap-1 p-1.5 bg-surface-100 dark:bg-surface-800 rounded-xl w-fit">
         {[
           { id: 'overview', label: 'Forecast', icon: TrendingUp },
           { id: 'anomalies', label: 'Anomalies', icon: AlertTriangle },
@@ -86,8 +96,10 @@ export default function Reports() {
           { id: 'history', label: 'History', icon: Clock }
         ].map(({ id, label, icon: Icon }) => (
           <button key={id} onClick={() => setTab(id)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              tab === id ? 'bg-white dark:bg-surface-700 text-surface-900 dark:text-white shadow-sm' : 'text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              tab === id
+                ? 'bg-white dark:bg-surface-700 text-surface-900 dark:text-white shadow-sm'
+                : 'text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
             }`}>
             <Icon className="w-4 h-4" /> {label}
           </button>
@@ -98,51 +110,98 @@ export default function Reports() {
       {tab === 'overview' && forecast && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="glass-card p-5">
-              <p className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase mb-1">30-Day Forecast</p>
+            <div className="kpi-card animate-slide-up" style={{ animationDelay: '0ms' }}>
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wide">30-Day Forecast</p>
+                <div className="w-9 h-9 rounded-lg bg-azure-100 dark:bg-azure-900/30 flex items-center justify-center">
+                  <DollarSign className="w-4.5 h-4.5 text-azure-600 dark:text-azure-400" />
+                </div>
+              </div>
               <p className="text-2xl font-bold text-surface-900 dark:text-white">{formatCurrency(forecast.summary?.total_forecasted_cost || 0)}</p>
-              <p className="text-xs text-surface-400 mt-1">Predicted total</p>
+              <p className="text-xs text-surface-400 mt-1.5">Predicted total</p>
             </div>
-            <div className="glass-card p-5">
-              <p className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase mb-1">Daily Average</p>
+            <div className="kpi-card animate-slide-up" style={{ animationDelay: '60ms' }}>
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wide">Daily Average</p>
+                <div className="w-9 h-9 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                  <Activity className="w-4.5 h-4.5 text-purple-600 dark:text-purple-400" />
+                </div>
+              </div>
               <p className="text-2xl font-bold text-surface-900 dark:text-white">{formatCurrency(forecast.summary?.avg_daily_forecast || 0)}</p>
-              <p className="text-xs text-surface-400 mt-1">Predicted daily cost</p>
+              <p className="text-xs text-surface-400 mt-1.5">Predicted daily cost</p>
             </div>
-            <div className="glass-card p-5">
-              <p className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase mb-1">Trend</p>
+            <div className="kpi-card animate-slide-up" style={{ animationDelay: '120ms' }}>
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wide">Trend</p>
+                <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${
+                  forecast.summary?.trend === 'increasing'
+                    ? 'bg-red-100 dark:bg-red-900/30'
+                    : 'bg-emerald-100 dark:bg-emerald-900/30'
+                }`}>
+                  {forecast.summary?.trend === 'increasing' ? (
+                    <TrendingUp className="w-4.5 h-4.5 text-red-600 dark:text-red-400" />
+                  ) : (
+                    <TrendingDown className="w-4.5 h-4.5 text-emerald-600 dark:text-emerald-400" />
+                  )}
+                </div>
+              </div>
               <div className="flex items-center gap-2">
-                {forecast.summary?.trend === 'increasing' ? (
-                  <TrendingUp className="w-6 h-6 text-red-500" />
-                ) : (
-                  <TrendingDown className="w-6 h-6 text-emerald-500" />
-                )}
                 <p className={`text-2xl font-bold capitalize ${
                   forecast.summary?.trend === 'increasing' ? 'text-red-500' : 'text-emerald-500'
                 }`}>{forecast.summary?.trend}</p>
               </div>
-              <p className="text-xs text-surface-400 mt-1">${Math.abs(forecast.summary?.trend_rate || 0).toFixed(2)}/day</p>
+              <p className="text-xs text-surface-400 mt-1.5">${Math.abs(forecast.summary?.trend_rate || 0).toFixed(2)}/day</p>
             </div>
           </div>
 
-          <div className="chart-container">
-            <h3 className="text-base font-semibold text-surface-900 dark:text-white mb-4">Cost Forecast (14-day prediction)</h3>
+          <div className="chart-container animate-slide-up" style={{ animationDelay: '180ms' }}>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-9 h-9 rounded-lg gradient-primary flex items-center justify-center">
+                <BarChart3 className="w-4.5 h-4.5 text-white" />
+              </div>
+              <div>
+                <h3 className="chart-title">Cost Forecast</h3>
+                <p className="chart-subtitle">14-day historical vs. 14-day prediction</p>
+              </div>
+            </div>
             <ResponsiveContainer width="100%" height={350}>
               <AreaChart data={forecastData}>
                 <defs>
                   <linearGradient id="fActual" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#0078d4" stopOpacity={0.3} /><stop offset="95%" stopColor="#0078d4" stopOpacity={0} />
+                    <stop offset="0%" stopColor="#0078d4" stopOpacity={0.35} />
+                    <stop offset="100%" stopColor="#0078d4" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="fPredicted" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#8661c5" stopOpacity={0.3} /><stop offset="95%" stopColor="#8661c5" stopOpacity={0} />
+                    <stop offset="0%" stopColor="#8661c5" stopOpacity={0.35} />
+                    <stop offset="100%" stopColor="#8661c5" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="currentColor" className="text-surface-200 dark:text-surface-800" />
-                <XAxis dataKey="date" tick={{ fontSize: 11 }} stroke="currentColor" className="text-surface-400" interval={2} />
-                <YAxis tick={{ fontSize: 11 }} stroke="currentColor" className="text-surface-400" tickFormatter={formatCurrency} />
-                <Tooltip formatter={(v) => formatCurrency(v)} contentStyle={{ borderRadius: '8px' }} />
-                <Area type="monotone" dataKey="actual" name="Actual" stroke="#0078d4" strokeWidth={2} fill="url(#fActual)" />
-                <Area type="monotone" dataKey="predicted" name="Predicted" stroke="#8661c5" strokeWidth={2} strokeDasharray="6 4" fill="url(#fPredicted)" />
-                <Area type="monotone" dataKey="upper" name="Upper Bound" stroke="transparent" fill="#8661c5" fillOpacity={0.05} />
+                <XAxis
+                  dataKey="date"
+                  tick={{ fontSize: 11, fill: '#94a3b8' }}
+                  axisLine={false}
+                  tickLine={false}
+                  interval={2}
+                />
+                <YAxis
+                  tick={{ fontSize: 11, fill: '#94a3b8' }}
+                  axisLine={false}
+                  tickLine={false}
+                  tickFormatter={formatCurrency}
+                />
+                <Tooltip
+                  formatter={(v) => formatCurrency(v)}
+                  contentStyle={{
+                    borderRadius: '12px',
+                    border: 'none',
+                    boxShadow: '0 4px 24px rgba(0,0,0,0.12)',
+                    padding: '10px 14px',
+                  }}
+                />
+                <Area type="monotone" dataKey="actual" name="Actual" stroke="#0078d4" strokeWidth={2.5} fill="url(#fActual)" dot={false} activeDot={{ r: 5, strokeWidth: 2, stroke: '#fff' }} />
+                <Area type="monotone" dataKey="predicted" name="Predicted" stroke="#8661c5" strokeWidth={2.5} strokeDasharray="6 4" fill="url(#fPredicted)" dot={false} activeDot={{ r: 5, strokeWidth: 2, stroke: '#fff' }} />
+                <Area type="monotone" dataKey="upper" name="Upper Bound" stroke="transparent" fill="#8661c5" fillOpacity={0.05} dot={false} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -153,27 +212,55 @@ export default function Reports() {
       {tab === 'anomalies' && anomalies && (
         <div className="space-y-6">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="glass-card p-4">
-              <p className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase">Total</p>
+            <div className="kpi-card animate-slide-up" style={{ animationDelay: '0ms' }}>
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wide">Total</p>
+                <div className="w-8 h-8 rounded-lg bg-azure-100 dark:bg-azure-900/30 flex items-center justify-center">
+                  <BarChart3 className="w-4 h-4 text-azure-600 dark:text-azure-400" />
+                </div>
+              </div>
               <p className="text-2xl font-bold text-surface-900 dark:text-white">{anomalies.summary?.total || 0}</p>
             </div>
-            <div className="glass-card p-4">
-              <p className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase">Critical</p>
+            <div className="kpi-card animate-slide-up" style={{ animationDelay: '60ms' }}>
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wide">Critical</p>
+                <div className="w-8 h-8 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                  <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400" />
+                </div>
+              </div>
               <p className="text-2xl font-bold text-red-600 dark:text-red-400">{anomalies.summary?.by_severity?.critical || 0}</p>
             </div>
-            <div className="glass-card p-4">
-              <p className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase">High</p>
+            <div className="kpi-card animate-slide-up" style={{ animationDelay: '120ms' }}>
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wide">High</p>
+                <div className="w-8 h-8 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
+                  <TrendingUp className="w-4 h-4 text-orange-600 dark:text-orange-400" />
+                </div>
+              </div>
               <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">{anomalies.summary?.by_severity?.high || 0}</p>
             </div>
-            <div className="glass-card p-4">
-              <p className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase">Unresolved</p>
+            <div className="kpi-card animate-slide-up" style={{ animationDelay: '180ms' }}>
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wide">Unresolved</p>
+                <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                  <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                </div>
+              </div>
               <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{anomalies.summary?.unresolved || 0}</p>
             </div>
           </div>
 
-          <div className="table-container">
+          <div className="table-container animate-slide-up" style={{ animationDelay: '240ms' }}>
             <div className="p-5 border-b border-surface-200 dark:border-surface-700">
-              <h3 className="text-base font-semibold text-surface-900 dark:text-white">Detected Anomalies</h3>
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-lg gradient-primary flex items-center justify-center">
+                  <AlertTriangle className="w-4.5 h-4.5 text-white" />
+                </div>
+                <div>
+                  <h3 className="chart-title">Detected Anomalies</h3>
+                  <p className="chart-subtitle">Cost anomalies detected in the last 30 days</p>
+                </div>
+              </div>
             </div>
             <div className="overflow-x-auto">
               <table>
@@ -182,7 +269,7 @@ export default function Reports() {
                 </thead>
                 <tbody>
                   {anomalies.anomalies?.map((a) => (
-                    <tr key={a.id}>
+                    <tr key={a.id} className={severityBorderColor(a.severity)}>
                       <td className="text-sm">{new Date(a.date).toLocaleDateString()}</td>
                       <td className="font-medium text-surface-900 dark:text-white text-sm">{a.resource_name || 'Unknown'}</td>
                       <td className="text-sm">{formatCurrency(a.expected_cost)}</td>
@@ -203,9 +290,17 @@ export default function Reports() {
 
       {/* Generate Tab */}
       {tab === 'generate' && (
-        <div className="max-w-lg">
-          <div className="glass-card p-6">
-            <h3 className="text-base font-semibold text-surface-900 dark:text-white mb-4">Generate New Report</h3>
+        <div className="max-w-lg animate-slide-up">
+          <div className="glass-card-elevated p-6">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-9 h-9 rounded-lg gradient-primary flex items-center justify-center">
+                <FileText className="w-4.5 h-4.5 text-white" />
+              </div>
+              <div>
+                <h3 className="chart-title">Generate New Report</h3>
+                <p className="chart-subtitle">Create a cost or optimization report</p>
+              </div>
+            </div>
             <form onSubmit={handleGenerate} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">Report Type</label>
@@ -228,7 +323,7 @@ export default function Reports() {
                     value={reportForm.period_end} onChange={(e) => setReportForm({ ...reportForm, period_end: e.target.value })} />
                 </div>
               </div>
-              <button type="submit" disabled={generating} className="btn-primary w-full flex items-center justify-center gap-2">
+              <button type="submit" disabled={generating} className="btn-primary w-full flex items-center justify-center gap-2 shadow-glow-blue">
                 {generating ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><FileText className="w-4 h-4" /> Generate Report</>}
               </button>
             </form>
@@ -238,7 +333,7 @@ export default function Reports() {
 
       {/* History Tab */}
       {tab === 'history' && (
-        <div className="table-container">
+        <div className="table-container animate-slide-up">
           <div className="overflow-x-auto">
             <table>
               <thead>

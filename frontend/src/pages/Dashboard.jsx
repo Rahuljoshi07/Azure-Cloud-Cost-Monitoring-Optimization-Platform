@@ -2,14 +2,15 @@ import { useState, useEffect } from 'react'
 import { costAPI, alertAPI, recommendationAPI, reportAPI } from '../lib/api'
 import {
   DollarSign, TrendingUp, TrendingDown, Server, AlertTriangle,
-  Lightbulb, ArrowUpRight, ArrowDownRight, Activity, BarChart3, Clock
+  Lightbulb, ArrowUpRight, ArrowDownRight, Activity, BarChart3, Clock,
+  Zap, Target, Shield
 } from 'lucide-react'
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts'
 
-const CHART_COLORS = ['#0078d4', '#00bcf2', '#8661c5', '#e74856', '#00cc6a', '#ffb900', '#ff8c00', '#e3008c']
+const CHART_COLORS = ['#0078d4', '#06b6d4', '#8b5cf6', '#f43f5e', '#10b981', '#f59e0b', '#ff8c00', '#ec4899']
 
 function formatCurrency(value) {
   if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`
@@ -17,52 +18,50 @@ function formatCurrency(value) {
   return `$${Number(value).toFixed(2)}`
 }
 
-function KpiCard({ title, value, change, icon: Icon, color, prefix = '$', loading }) {
+function KpiCard({ title, value, change, icon: Icon, color, prefix = '$', loading, index = 0 }) {
   const isPositive = change > 0
+  const colorMap = {
+    blue: { bg: 'bg-azure-100 dark:bg-azure-900/30', text: 'text-azure-600 dark:text-azure-400', glow: 'shadow-glow-blue' },
+    green: { bg: 'bg-emerald-100 dark:bg-emerald-900/30', text: 'text-emerald-600 dark:text-emerald-400', glow: 'shadow-glow-emerald' },
+    amber: { bg: 'bg-amber-100 dark:bg-amber-900/30', text: 'text-amber-600 dark:text-amber-400', glow: 'shadow-glow-amber' },
+    red: { bg: 'bg-red-100 dark:bg-red-900/30', text: 'text-red-600 dark:text-red-400', glow: 'shadow-glow-rose' },
+    purple: { bg: 'bg-purple-100 dark:bg-purple-900/30', text: 'text-purple-600 dark:text-purple-400', glow: '' },
+    cyan: { bg: 'bg-cyan-100 dark:bg-cyan-900/30', text: 'text-cyan-600 dark:text-cyan-400', glow: '' },
+  }
+  const c = colorMap[color] || colorMap.blue
+
   return (
-    <div className={`kpi-card kpi-card-${color} animate-slide-up`}>
+    <div className={`kpi-card kpi-card-${color} animate-slide-up stagger-${index + 1}`}>
       {loading ? (
         <div className="space-y-3">
-          <div className="h-4 bg-surface-200 dark:bg-surface-700 rounded w-24 animate-pulse" />
-          <div className="h-8 bg-surface-200 dark:bg-surface-700 rounded w-32 animate-pulse" />
-          <div className="h-3 bg-surface-200 dark:bg-surface-700 rounded w-20 animate-pulse" />
+          <div className="skeleton h-4 w-24" />
+          <div className="skeleton h-8 w-32" />
+          <div className="skeleton h-3 w-20" />
         </div>
       ) : (
         <>
-          <div className="flex items-start justify-between mb-3">
-            <span className="text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">{title}</span>
-            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-              color === 'blue' ? 'bg-azure-100 dark:bg-azure-900/30' :
-              color === 'green' ? 'bg-emerald-100 dark:bg-emerald-900/30' :
-              color === 'amber' ? 'bg-amber-100 dark:bg-amber-900/30' :
-              color === 'red' ? 'bg-red-100 dark:bg-red-900/30' :
-              color === 'purple' ? 'bg-purple-100 dark:bg-purple-900/30' :
-              'bg-cyan-100 dark:bg-cyan-900/30'
-            }`}>
-              <Icon className={`w-5 h-5 ${
-                color === 'blue' ? 'text-azure-600 dark:text-azure-400' :
-                color === 'green' ? 'text-emerald-600 dark:text-emerald-400' :
-                color === 'amber' ? 'text-amber-600 dark:text-amber-400' :
-                color === 'red' ? 'text-red-600 dark:text-red-400' :
-                color === 'purple' ? 'text-purple-600 dark:text-purple-400' :
-                'text-cyan-600 dark:text-cyan-400'
-              }`} />
+          <div className="flex items-start justify-between mb-4">
+            <span className="text-[11px] font-bold text-surface-500 dark:text-surface-400 uppercase tracking-widest">{title}</span>
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${c.bg} ${c.glow} transition-transform duration-300 group-hover:scale-110`}>
+              <Icon className={`w-5 h-5 ${c.text}`} />
             </div>
           </div>
-          <p className="text-2xl font-bold text-surface-900 dark:text-white">
+          <p className="number-lg text-surface-900 dark:text-white">
             {prefix}{typeof value === 'number' ? value.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : value}
           </p>
           {change !== undefined && change !== null && (
-            <div className="flex items-center gap-1 mt-2">
-              {isPositive ? (
-                <ArrowUpRight className="w-4 h-4 text-red-500" />
-              ) : (
-                <ArrowDownRight className="w-4 h-4 text-emerald-500" />
-              )}
-              <span className={`text-xs font-semibold ${isPositive ? 'text-red-500' : 'text-emerald-500'}`}>
-                {Math.abs(change).toFixed(1)}%
-              </span>
-              <span className="text-xs text-surface-400 dark:text-surface-500">vs prev period</span>
+            <div className="flex items-center gap-1.5 mt-3">
+              <div className={`flex items-center gap-0.5 px-2 py-0.5 rounded-lg ${isPositive ? 'bg-red-50 dark:bg-red-900/20' : 'bg-emerald-50 dark:bg-emerald-900/20'}`}>
+                {isPositive ? (
+                  <ArrowUpRight className="w-3.5 h-3.5 text-red-500" />
+                ) : (
+                  <ArrowDownRight className="w-3.5 h-3.5 text-emerald-500" />
+                )}
+                <span className={`text-xs font-bold ${isPositive ? 'text-red-500' : 'text-emerald-500'}`}>
+                  {Math.abs(change).toFixed(1)}%
+                </span>
+              </div>
+              <span className="text-[10px] text-surface-400 dark:text-surface-500 font-medium">vs prev period</span>
             </div>
           )}
         </>
@@ -74,12 +73,15 @@ function KpiCard({ title, value, change, icon: Icon, color, prefix = '$', loadin
 function CustomTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null
   return (
-    <div className="glass-card p-3 shadow-lg border border-surface-200 dark:border-surface-700">
-      <p className="text-xs font-medium text-surface-500 dark:text-surface-400 mb-1">{label}</p>
+    <div className="glass-card p-3 shadow-card-elevated border border-surface-200/80 dark:border-surface-700/80 backdrop-blur-xl">
+      <p className="text-[10px] font-bold text-surface-500 dark:text-surface-400 mb-1.5 uppercase tracking-wider">{label}</p>
       {payload.map((entry, i) => (
-        <p key={i} className="text-sm font-semibold" style={{ color: entry.color }}>
-          {entry.name}: {formatCurrency(entry.value)}
-        </p>
+        <div key={i} className="flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
+          <p className="text-sm font-semibold text-surface-900 dark:text-white">
+            {entry.name}: {formatCurrency(entry.value)}
+          </p>
+        </div>
       ))}
     </div>
   )
@@ -152,18 +154,25 @@ export default function Dashboard() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="page-header mb-0">
-          <h1 className="page-title">Cost Dashboard</h1>
-          <p className="page-subtitle">Monitor and optimize your Azure cloud spending</p>
+          <div className="flex items-center gap-3 mb-1">
+            <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-glow-blue">
+              <Zap className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h1 className="page-title">Cost Dashboard</h1>
+              <p className="page-subtitle">Monitor and optimize your Azure cloud spending</p>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 p-1 bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 shadow-sm">
           {['7', '14', '30', '60', '90'].map(p => (
             <button
               key={p}
               onClick={() => setPeriod(p)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              className={`px-3.5 py-2 rounded-lg text-xs font-semibold transition-all duration-200 ${
                 period === p
                   ? 'gradient-primary text-white shadow-sm'
-                  : 'bg-white dark:bg-surface-800 text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-700 border border-surface-200 dark:border-surface-700'
+                  : 'text-surface-500 dark:text-surface-400 hover:text-surface-900 dark:hover:text-white hover:bg-surface-50 dark:hover:bg-surface-700'
               }`}
             >
               {p}d
@@ -174,56 +183,59 @@ export default function Dashboard() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-        <KpiCard title="Total Cost" value={overview?.summary?.total_cost || 0} change={overview?.summary?.change_percent} icon={DollarSign} color="blue" loading={loading} />
-        <KpiCard title="Daily Avg" value={overview ? Math.round(overview.summary.total_cost / overview.summary.period_days) : 0} icon={Activity} color="cyan" loading={loading} />
-        <KpiCard title="Resources" value={overview?.summary?.resource_count || 0} prefix="" icon={Server} color="purple" loading={loading} />
-        <KpiCard title="Active Alerts" value={alertStats ? parseInt(alertStats.active) : 0} prefix="" icon={AlertTriangle} color="red" loading={loading} />
-        <KpiCard title="Recommendations" value={recSummary?.summary?.total_count || 0} prefix="" icon={Lightbulb} color="amber" loading={loading} />
-        <KpiCard title="Potential Savings" value={Math.round(totalSavings)} icon={TrendingDown} color="green" loading={loading} />
+        <KpiCard title="Total Cost" value={overview?.summary?.total_cost || 0} change={overview?.summary?.change_percent} icon={DollarSign} color="blue" loading={loading} index={0} />
+        <KpiCard title="Daily Avg" value={overview ? Math.round(overview.summary.total_cost / overview.summary.period_days) : 0} icon={Activity} color="cyan" loading={loading} index={1} />
+        <KpiCard title="Resources" value={overview?.summary?.resource_count || 0} prefix="" icon={Server} color="purple" loading={loading} index={2} />
+        <KpiCard title="Active Alerts" value={alertStats ? parseInt(alertStats.active) : 0} prefix="" icon={AlertTriangle} color="red" loading={loading} index={3} />
+        <KpiCard title="Recommendations" value={recSummary?.summary?.total_count || 0} prefix="" icon={Lightbulb} color="amber" loading={loading} index={4} />
+        <KpiCard title="Potential Savings" value={Math.round(totalSavings)} icon={TrendingDown} color="green" loading={loading} index={5} />
       </div>
 
       {/* Charts Row 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Daily Cost Trend - Takes 2 cols */}
+        {/* Daily Cost Trend */}
         <div className="lg:col-span-2 chart-container">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-base font-semibold text-surface-900 dark:text-white">Daily Cost Trend</h3>
-              <p className="text-xs text-surface-500 dark:text-surface-400 mt-0.5">Last {period} days spending pattern</p>
+              <h3 className="chart-title">Daily Cost Trend</h3>
+              <p className="chart-subtitle">Last {period} days spending pattern</p>
             </div>
-            <BarChart3 className="w-5 h-5 text-surface-400" />
+            <div className="w-9 h-9 rounded-xl bg-azure-50 dark:bg-azure-900/20 flex items-center justify-center">
+              <BarChart3 className="w-4 h-4 text-azure-500" />
+            </div>
           </div>
-          <ResponsiveContainer width="100%" height={280}>
+          <ResponsiveContainer width="100%" height={300}>
             <AreaChart data={dailyData}>
               <defs>
                 <linearGradient id="costGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#0078d4" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#0078d4" stopOpacity={0} />
+                  <stop offset="0%" stopColor="#0078d4" stopOpacity={0.25} />
+                  <stop offset="100%" stopColor="#0078d4" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="currentColor" className="text-surface-200 dark:text-surface-800" />
-              <XAxis dataKey="date" tick={{ fontSize: 11 }} stroke="currentColor" className="text-surface-400" interval="preserveStartEnd" />
-              <YAxis tick={{ fontSize: 11 }} stroke="currentColor" className="text-surface-400" tickFormatter={formatCurrency} />
+              <CartesianGrid strokeDasharray="3 3" stroke="currentColor" className="text-surface-100 dark:text-surface-800" />
+              <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
+              <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} tickFormatter={formatCurrency} />
               <Tooltip content={<CustomTooltip />} />
-              <Area type="monotone" dataKey="cost" name="Daily Cost" stroke="#0078d4" strokeWidth={2} fill="url(#costGradient)" />
+              <Area type="monotone" dataKey="cost" name="Daily Cost" stroke="#0078d4" strokeWidth={2.5} fill="url(#costGradient)" dot={false} activeDot={{ r: 5, strokeWidth: 2, stroke: '#fff' }} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
 
-        {/* Cost by Service - Pie */}
+        {/* Cost by Service */}
         <div className="chart-container">
-          <div className="mb-4">
-            <h3 className="text-base font-semibold text-surface-900 dark:text-white">Cost by Service</h3>
-            <p className="text-xs text-surface-500 dark:text-surface-400 mt-0.5">Top services by spending</p>
+          <div className="mb-6">
+            <h3 className="chart-title">Cost by Service</h3>
+            <p className="chart-subtitle">Top services by spending</p>
           </div>
-          <ResponsiveContainer width="100%" height={280}>
+          <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
                 data={serviceData}
-                cx="50%" cy="50%"
-                innerRadius={55} outerRadius={90}
+                cx="50%" cy="45%"
+                innerRadius={60} outerRadius={95}
                 paddingAngle={3}
                 dataKey="value"
+                stroke="none"
               >
                 {serviceData.map((_, i) => (
                   <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
@@ -231,9 +243,10 @@ export default function Dashboard() {
               </Pie>
               <Tooltip content={<CustomTooltip />} />
               <Legend
-                formatter={(value) => <span className="text-xs text-surface-600 dark:text-surface-400">{value}</span>}
+                formatter={(value) => <span className="text-[11px] font-medium text-surface-600 dark:text-surface-400">{value}</span>}
                 iconSize={8}
-                wrapperStyle={{ fontSize: '11px' }}
+                iconType="circle"
+                wrapperStyle={{ fontSize: '11px', paddingTop: '12px' }}
               />
             </PieChart>
           </ResponsiveContainer>
@@ -244,19 +257,22 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Cost by Region */}
         <div className="chart-container">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-base font-semibold text-surface-900 dark:text-white">Cost by Region</h3>
-              <p className="text-xs text-surface-500 dark:text-surface-400 mt-0.5">Geographic distribution of costs</p>
+              <h3 className="chart-title">Cost by Region</h3>
+              <p className="chart-subtitle">Geographic distribution of costs</p>
+            </div>
+            <div className="w-9 h-9 rounded-xl bg-violet-50 dark:bg-violet-900/20 flex items-center justify-center">
+              <Target className="w-4 h-4 text-violet-500" />
             </div>
           </div>
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={regionData} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" stroke="currentColor" className="text-surface-200 dark:text-surface-800" />
-              <XAxis type="number" tick={{ fontSize: 11 }} stroke="currentColor" className="text-surface-400" tickFormatter={formatCurrency} />
-              <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} stroke="currentColor" className="text-surface-400" width={100} />
+              <CartesianGrid strokeDasharray="3 3" stroke="currentColor" className="text-surface-100 dark:text-surface-800" horizontal={false} />
+              <XAxis type="number" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} tickFormatter={formatCurrency} />
+              <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} width={100} />
               <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="cost" name="Cost" fill="#0078d4" radius={[0, 4, 4, 0]} barSize={20}>
+              <Bar dataKey="cost" name="Cost" radius={[0, 6, 6, 0]} barSize={22}>
                 {regionData.map((_, i) => (
                   <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
                 ))}
@@ -267,63 +283,73 @@ export default function Dashboard() {
 
         {/* Cost Forecast */}
         <div className="chart-container">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-base font-semibold text-surface-900 dark:text-white">Cost Forecast</h3>
-              <p className="text-xs text-surface-500 dark:text-surface-400 mt-0.5">
-                Predicted spending trend: <span className={`font-medium ${
+              <h3 className="chart-title">Cost Forecast</h3>
+              <p className="chart-subtitle">
+                Predicted trend: <span className={`font-bold ${
                   forecast?.summary?.trend === 'increasing' ? 'text-red-500' : 'text-emerald-500'
                 }`}>{forecast?.summary?.trend || 'calculating...'}</span>
               </p>
             </div>
-            <Clock className="w-5 h-5 text-surface-400" />
+            <div className="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center">
+              <Clock className="w-4 h-4 text-purple-500" />
+            </div>
           </div>
           <ResponsiveContainer width="100%" height={280}>
             <AreaChart data={forecastData}>
               <defs>
                 <linearGradient id="forecastGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#8661c5" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#8661c5" stopOpacity={0} />
+                  <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.25} />
+                  <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="actualGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#0078d4" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#0078d4" stopOpacity={0} />
+                  <stop offset="0%" stopColor="#0078d4" stopOpacity={0.25} />
+                  <stop offset="100%" stopColor="#0078d4" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="currentColor" className="text-surface-200 dark:text-surface-800" />
-              <XAxis dataKey="date" tick={{ fontSize: 11 }} stroke="currentColor" className="text-surface-400" interval={3} />
-              <YAxis tick={{ fontSize: 11 }} stroke="currentColor" className="text-surface-400" tickFormatter={formatCurrency} />
+              <CartesianGrid strokeDasharray="3 3" stroke="currentColor" className="text-surface-100 dark:text-surface-800" />
+              <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} interval={3} />
+              <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} tickFormatter={formatCurrency} />
               <Tooltip content={<CustomTooltip />} />
-              <Area type="monotone" dataKey="actual" name="Actual" stroke="#0078d4" strokeWidth={2} fill="url(#actualGradient)" />
-              <Area type="monotone" dataKey="predicted" name="Predicted" stroke="#8661c5" strokeWidth={2} strokeDasharray="5 5" fill="url(#forecastGradient)" />
-              <Area type="monotone" dataKey="upper" name="Upper Bound" stroke="#8661c5" strokeWidth={0} fill="#8661c5" fillOpacity={0.05} />
+              <Area type="monotone" dataKey="actual" name="Actual" stroke="#0078d4" strokeWidth={2.5} fill="url(#actualGradient)" dot={false} />
+              <Area type="monotone" dataKey="predicted" name="Predicted" stroke="#8b5cf6" strokeWidth={2} strokeDasharray="6 4" fill="url(#forecastGradient)" dot={false} />
+              <Area type="monotone" dataKey="upper" name="Upper Bound" stroke="transparent" fill="#8b5cf6" fillOpacity={0.05} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
       </div>
 
-      {/* Resource Groups & Top Costs */}
+      {/* Resource Groups & Alerts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Cost by Resource Group */}
         <div className="chart-container">
-          <div className="mb-4">
-            <h3 className="text-base font-semibold text-surface-900 dark:text-white">Cost by Resource Group</h3>
-            <p className="text-xs text-surface-500 dark:text-surface-400 mt-0.5">Top resource groups by cost</p>
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="chart-title">Cost by Resource Group</h3>
+              <p className="chart-subtitle">Top resource groups by cost</p>
+            </div>
+            <div className="w-9 h-9 rounded-xl bg-cyan-50 dark:bg-cyan-900/20 flex items-center justify-center">
+              <Server className="w-4 h-4 text-cyan-500" />
+            </div>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-4">
             {overview?.by_resource_group?.slice(0, 6).map((rg, i) => {
               const maxCost = overview.by_resource_group[0]?.total_cost || 1
               const pct = (parseFloat(rg.total_cost) / parseFloat(maxCost)) * 100
               return (
-                <div key={i}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm text-surface-700 dark:text-surface-300 font-medium">{rg.resource_group}</span>
-                    <span className="text-sm font-semibold text-surface-900 dark:text-white">{formatCurrency(rg.total_cost)}</span>
+                <div key={i} className="group">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }} />
+                      <span className="text-sm text-surface-700 dark:text-surface-300 font-medium group-hover:text-surface-900 dark:group-hover:text-white transition-colors">{rg.resource_group}</span>
+                    </div>
+                    <span className="text-sm font-bold text-surface-900 dark:text-white">{formatCurrency(rg.total_cost)}</span>
                   </div>
                   <div className="h-2 bg-surface-100 dark:bg-surface-800 rounded-full overflow-hidden">
                     <div
-                      className="h-full rounded-full transition-all duration-1000"
-                      style={{ width: `${pct}%`, backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }}
+                      className="h-full rounded-full transition-all duration-1000 ease-out animate-progress"
+                      style={{ '--progress-width': `${pct}%`, backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }}
                     />
                   </div>
                 </div>
@@ -332,48 +358,48 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Quick Alerts */}
+        {/* Quick Alerts & Savings */}
         <div className="chart-container">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-base font-semibold text-surface-900 dark:text-white">Recent Alerts</h3>
-              <p className="text-xs text-surface-500 dark:text-surface-400 mt-0.5">
-                {alertStats?.active || 0} active alerts
-              </p>
+              <h3 className="chart-title">Alert Overview</h3>
+              <p className="chart-subtitle">{alertStats?.active || 0} active alerts</p>
             </div>
-            <AlertTriangle className="w-5 h-5 text-amber-500" />
+            <div className="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center">
+              <Shield className="w-4 h-4 text-amber-500" />
+            </div>
           </div>
-          <div className="space-y-2">
-            {alertStats && (
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                <div className="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/50">
-                  <p className="text-2xl font-bold text-red-600 dark:text-red-400">{alertStats.critical}</p>
-                  <p className="text-xs text-red-500 dark:text-red-400">Critical</p>
+
+          {alertStats && (
+            <div className="grid grid-cols-2 gap-3 mb-5">
+              {[
+                { label: 'Critical', value: alertStats.critical, bg: 'bg-red-50 dark:bg-red-900/15', border: 'border-red-100 dark:border-red-900/40', text: 'text-red-600 dark:text-red-400', dot: 'bg-red-500' },
+                { label: 'High', value: alertStats.high, bg: 'bg-orange-50 dark:bg-orange-900/15', border: 'border-orange-100 dark:border-orange-900/40', text: 'text-orange-600 dark:text-orange-400', dot: 'bg-orange-500' },
+                { label: 'Medium', value: alertStats.medium, bg: 'bg-amber-50 dark:bg-amber-900/15', border: 'border-amber-100 dark:border-amber-900/40', text: 'text-amber-600 dark:text-amber-400', dot: 'bg-amber-500' },
+                { label: 'Low', value: alertStats.low, bg: 'bg-emerald-50 dark:bg-emerald-900/15', border: 'border-emerald-100 dark:border-emerald-900/40', text: 'text-emerald-600 dark:text-emerald-400', dot: 'bg-emerald-500' },
+              ].map((item, i) => (
+                <div key={i} className={`p-3.5 rounded-xl ${item.bg} border ${item.border} transition-all duration-200 hover:scale-[1.02]`}>
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className={`w-2 h-2 rounded-full ${item.dot}`} />
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-surface-500 dark:text-surface-400">{item.label}</p>
+                  </div>
+                  <p className={`text-2xl font-extrabold ${item.text}`}>{item.value}</p>
                 </div>
-                <div className="p-3 rounded-lg bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-900/50">
-                  <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">{alertStats.high}</p>
-                  <p className="text-xs text-orange-500 dark:text-orange-400">High</p>
-                </div>
-                <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-900/50">
-                  <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{alertStats.medium}</p>
-                  <p className="text-xs text-amber-500 dark:text-amber-400">Medium</p>
-                </div>
-                <div className="p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-900/50">
-                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">{alertStats.low}</p>
-                  <p className="text-xs text-green-500 dark:text-green-400">Low</p>
-                </div>
-              </div>
-            )}
-            <div className="p-4 rounded-lg bg-azure-50/50 dark:bg-azure-900/10 border border-azure-100 dark:border-azure-900/50">
-              <div className="flex items-center gap-2 mb-2">
-                <Lightbulb className="w-4 h-4 text-azure-600 dark:text-azure-400" />
-                <span className="text-sm font-semibold text-azure-700 dark:text-azure-300">Savings Opportunity</span>
-              </div>
-              <p className="text-sm text-azure-600 dark:text-azure-400">
-                {recSummary?.summary?.total_count || 0} recommendations found with potential monthly savings of{' '}
-                <span className="font-bold">{formatCurrency(totalSavings)}</span>
-              </p>
+              ))}
             </div>
+          )}
+
+          <div className="p-5 rounded-xl bg-gradient-to-r from-azure-50 to-indigo-50 dark:from-azure-900/15 dark:to-indigo-900/10 border border-azure-100/80 dark:border-azure-800/40">
+            <div className="flex items-center gap-2.5 mb-2">
+              <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center shadow-glow-blue">
+                <Lightbulb className="w-4 h-4 text-white" />
+              </div>
+              <span className="text-sm font-bold text-azure-700 dark:text-azure-300">Savings Opportunity</span>
+            </div>
+            <p className="text-sm text-azure-600/80 dark:text-azure-400/80 leading-relaxed">
+              {recSummary?.summary?.total_count || 0} recommendations with potential monthly savings of{' '}
+              <span className="font-extrabold text-azure-700 dark:text-azure-300">{formatCurrency(totalSavings)}</span>
+            </p>
           </div>
         </div>
       </div>

@@ -1,15 +1,15 @@
 import { NavLink, useLocation } from 'react-router-dom'
 import { useSidebarStore } from '../store/useStore'
 import {
-  LayoutDashboard, DollarSign, Server, Lightbulb,
-  Bell, FileText, ChevronLeft, ChevronRight, X, TrendingUp, Settings
+  LayoutDashboard, BarChart3, Server, Lightbulb,
+  Bell, FileText, Settings, X, ChevronLeft, Zap
 } from 'lucide-react'
 
 const navItems = [
   { path: '/', icon: LayoutDashboard, label: 'Dashboard' },
-  { path: '/costs', icon: DollarSign, label: 'Cost Breakdown' },
+  { path: '/costs', icon: BarChart3, label: 'Cost Analysis' },
   { path: '/resources', icon: Server, label: 'Resources' },
-  { path: '/recommendations', icon: Lightbulb, label: 'Recommendations' },
+  { path: '/recommendations', icon: Lightbulb, label: 'Optimize' },
   { path: '/alerts', icon: Bell, label: 'Alerts & Budgets' },
   { path: '/reports', icon: FileText, label: 'Reports' },
   { path: '/settings', icon: Settings, label: 'Settings' },
@@ -21,71 +21,74 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Mobile overlay */}
-      {isMobileOpen && (
-        <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={closeMobile} />
-      )}
+      {mobileOverlay()}
 
-      {/* Sidebar */}
       <aside className={`
-        fixed top-0 left-0 h-full z-50 bg-white dark:bg-surface-900 border-r border-surface-200 dark:border-surface-800
-        transition-all duration-300 flex flex-col
-        ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}
-        lg:translate-x-0
-        ${isCollapsed ? 'w-20' : 'w-64'}
+        fixed top-0 left-0 h-screen z-50 flex flex-col
+        bg-white dark:bg-surface-900 border-r border-surface-200/80 dark:border-surface-800/80
+        transition-all duration-300 ease-in-out
+        ${isCollapsed ? 'w-[72px]' : 'w-[260px]'}
+        ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         {/* Logo */}
-        <div className="flex items-center justify-between h-16 px-4 border-b border-surface-200 dark:border-surface-800">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg gradient-primary flex items-center justify-center flex-shrink-0">
-              <TrendingUp className="w-5 h-5 text-white" />
+        <div className={`flex items-center h-16 border-b border-surface-100 dark:border-surface-800 ${isCollapsed ? 'justify-center px-2' : 'px-5'}`}>
+          {isCollapsed ? (
+            <div className="w-9 h-9 rounded-xl gradient-primary flex items-center justify-center shadow-glow-blue">
+              <Zap className="w-5 h-5 text-white" />
             </div>
-            {!isCollapsed && (
-              <div className="animate-fade-in">
-                <h1 className="text-base font-bold text-surface-900 dark:text-white leading-tight">AzureCost</h1>
-                <p className="text-[10px] text-surface-500 dark:text-surface-400 font-medium uppercase tracking-wider">Monitor</p>
+          ) : (
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl gradient-primary flex items-center justify-center shadow-glow-blue flex-shrink-0">
+                <Zap className="w-5 h-5 text-white" />
               </div>
-            )}
-          </div>
-          <button onClick={closeMobile} className="lg:hidden p-1 rounded hover:bg-surface-100 dark:hover:bg-surface-800">
-            <X className="w-5 h-5" />
+              <div>
+                <h1 className="text-sm font-extrabold text-surface-900 dark:text-white tracking-tight">AzureCost</h1>
+                <p className="text-[10px] font-medium text-surface-400 dark:text-surface-500 uppercase tracking-widest">Monitor</p>
+              </div>
+            </div>
+          )}
+          <button onClick={closeMobile} className="lg:hidden ml-auto p-1.5 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800">
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
-          {navItems.map(({ path, icon: Icon, label }) => (
-            <NavLink
-              key={path}
-              to={path}
-              end={path === '/'}
-              onClick={closeMobile}
-              className={({ isActive }) => `
-                flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
-                ${isActive
-                  ? 'bg-azure-50 dark:bg-azure-900/30 text-azure-600 dark:text-azure-400 shadow-sm'
-                  : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800 hover:text-surface-900 dark:hover:text-surface-100'
-                }
-                ${isCollapsed ? 'justify-center' : ''}
-              `}
-              title={isCollapsed ? label : undefined}
-            >
-              <Icon className="w-5 h-5 flex-shrink-0" />
-              {!isCollapsed && <span className="animate-fade-in">{label}</span>}
-            </NavLink>
-          ))}
+        {/* Nav */}
+        <nav className={`flex-1 overflow-y-auto py-4 ${isCollapsed ? 'px-2' : 'px-3'}`}>
+          <div className="space-y-1">
+            {navItems.map(({ path, icon: Icon, label }) => {
+              const isActive = path === '/' ? location.pathname === '/' : location.pathname.startsWith(path)
+              return (
+                <NavLink
+                  key={path}
+                  to={path}
+                  onClick={closeMobile}
+                  title={isCollapsed ? label : undefined}
+                  className={`sidebar-link ${isActive ? 'active' : ''} ${isCollapsed ? 'justify-center px-0' : ''}`}
+                >
+                  <Icon className={`w-[18px] h-[18px] flex-shrink-0 ${isActive ? 'text-azure-500' : ''}`} />
+                  {!isCollapsed && <span className="truncate">{label}</span>}
+                </NavLink>
+              )
+            })}
+          </div>
         </nav>
 
-        {/* Collapse toggle (desktop) */}
-        <div className="hidden lg:flex p-3 border-t border-surface-200 dark:border-surface-800">
+        {/* Collapse Toggle */}
+        <div className={`hidden lg:flex items-center border-t border-surface-100 dark:border-surface-800 ${isCollapsed ? 'justify-center p-2' : 'px-3 py-3'}`}>
           <button
             onClick={toggleCollapse}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-800 transition-all duration-200"
+            className="p-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 transition-all"
           >
-            {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <><ChevronLeft className="w-4 h-4" /><span>Collapse</span></>}
+            <ChevronLeft className={`w-4 h-4 transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`} />
           </button>
+          {!isCollapsed && <span className="text-[11px] text-surface-400 ml-2">Collapse</span>}
         </div>
       </aside>
     </>
   )
+
+  function mobileOverlay() {
+    if (!isMobileOpen) return null
+    return <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden animate-fade-in" onClick={closeMobile} />
+  }
 }
