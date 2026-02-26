@@ -3,6 +3,10 @@
  * Orchestrates pulling data from Azure APIs into PostgreSQL.
  * Run manually:  npm run sync
  * Run on cron:   starts automatically in server.js
+ *
+ * In mock mode (AZURE_USE_MOCK=true), performs a local sync that generates
+ * realistic cost records, VM metrics, recomputes budget spend, runs anomaly
+ * detection, and checks budget alert thresholds — all from local DB data.
  */
 const { query, getClient } = require('../config/database');
 const { isAzureLive, getSubscriptionIds } = require('./azureCredential');
@@ -16,8 +20,229 @@ const { checkBudgetAlerts, sendAlert } = require('./notificationService');
 
 let _syncing = false;
 
+// ─── Cost ranges by Azure resource type (used for mock data generation) ──────
+
+const SERVICE_TYPE_MAP = {
+  'microsoft.compute/virtualmachines':       { service: 'Virtual Machines',    min: 5,   max: 85  },
+  'microsoft.sql/servers/databases':         { service: 'Azure SQL Database',  min: 3,   max: 45  },
+  'microsoft.storage/storageaccounts':       { service: 'Storage Accounts',    min: 0.5, max: 15  },
+  'microsoft.web/sites':                     { service: 'App Service',         min: 2,   max: 35  },
+  'microsoft.containerservice/managedclusters': { service: 'AKS',             min: 10,  max: 120 },
+  'microsoft.documentdb/databaseaccounts':   { service: 'Cosmos DB',           min: 5,   max: 60  },
+  'microsoft.web/sites/functions':           { service: 'Azure Functions',     min: 0.1, max: 8   },
+  'microsoft.network/loadbalancers':         { service: 'Load Balancer',       min: 1,   max: 12  },
+  'microsoft.network/virtualnetworks':       { service: 'Virtual Network',     min: 0.5, max: 5   },
+  'microsoft.insights/components':           { service: 'Azure Monitor',       min: 1,   max: 10  },
+  'microsoft.keyvault/vaults':               { service: 'Key Vault',           min: 0.1, max: 2   },
+  'microsoft.cache/redis':                   { service: 'Redis Cache',         min: 3,   max: 30  },
+  'microsoft.containerregistry/registries':  { service: 'Container Registry',  min: 1,   max: 8   },
+  'microsoft.cdn/profiles':                  { service: 'CDN',                 min: 0.5, max: 15  },
+  'microsoft.apimanagement/service':         { service: 'API Management',      min: 5,   max: 40  },
+};
+
+// Default cost range for resource types not in the map
+const DEFAULT_COST_RANGE = { service: 'Other', min: 1, max: 20 };
+
+// ─── Helpers for mock data generation ────────────────────────────────────────
+
+/**
+ * Generate a realistic cost value based on service type, with weekend
+ * reduction and occasional random spikes.
+ */
+function generateMockCost(resourceType, date) {
+  const typeKey = (resourceType || '').toLowerCase();
+  const range = SERVICE_TYPE_MAP[typeKey] || DEFAULT_COST_RANGE;
+
+  // Base cost: random value within the range
+  let cost = range.min + Math.random() * (range.max - range.min);
+
+  // Weekend reduction (Saturday=6, Sunday=0): costs drop 20-40%
+  const day = new Date(date).getDay();
+  if (day === 0 || day === 6) {
+    cost *= 0.6 + Math.random() * 0.2; // 60-80% of normal
+  }
+
+  // Random spike: ~8% chance of a 1.5-2.5x multiplier
+  if (Math.random() < 0.08) {
+    cost *= 1.5 + Math.random();
+  }
+
+  return Math.round(cost * 100) / 100;
+}
+
+/**
+ * Get service name for a resource type.
+ */
+function getServiceName(resourceType) {
+  const typeKey = (resourceType || '').toLowerCase();
+  return (SERVICE_TYPE_MAP[typeKey] || DEFAULT_COST_RANGE).service;
+}
+
+// ─── Mock Sync ──────────────────────────────────────────────────────────────
+
+/**
+ * Mock sync: generates realistic data using existing DB resources rather
+ * than calling Azure APIs. Useful for local dev and demo environments.
+ */
+async function runMockSync() {
+  _syncing = true;
+  const report = { started: new Date(), mode: 'mock', steps: {} };
+
+  try {
+    console.log('\n========== Mock Data Sync Started ==========\n');
+
+    // ── Step 1: Refresh Cost Data (last 3 days) ──────────────────────────
+
+    console.log('[MockSync] Step 1: Refreshing cost data (last 3 days)...');
+    let costInserted = 0;
+
+    const resources = await query('SELECT id, type, subscription_id FROM resources');
+
+    for (const resource of resources.rows) {
+      for (let daysAgo = 0; daysAgo < 3; daysAgo++) {
+        const date = new Date();
+        date.setDate(date.getDate() - daysAgo);
+        const dateStr = date.toISOString().split('T')[0];
+
+        // Check if a cost record already exists for this resource + date
+        const existing = await query(
+          `SELECT id FROM cost_records
+           WHERE resource_id = $1 AND date = $2`,
+          [resource.id, dateStr]
+        );
+
+        if (existing.rows.length === 0) {
+          const cost = generateMockCost(resource.type, dateStr);
+          const serviceName = getServiceName(resource.type);
+
+          await query(
+            `INSERT INTO cost_records (resource_id, subscription_id, date, cost, currency, service_name, meter_category, region, tags)
+             VALUES ($1, $2, $3, $4, 'USD', $5, $6, 'eastus', '{}')`,
+            [resource.id, resource.subscription_id, dateStr, cost, serviceName, serviceName]
+          );
+          costInserted++;
+        }
+      }
+    }
+
+    console.log(`[MockSync]   -> ${costInserted} cost records inserted for ${resources.rows.length} resources`);
+    report.steps.costs = { inserted: costInserted, resourcesProcessed: resources.rows.length };
+
+    // ── Step 2: Update VM Metrics (last day) ─────────────────────────────
+
+    console.log('[MockSync] Step 2: Generating VM metrics (last day)...');
+    let metricsInserted = 0;
+
+    const vms = await query(
+      `SELECT id, resource_id FROM resources
+       WHERE LOWER(type) = 'microsoft.compute/virtualmachines' AND status = 'running'`
+    );
+
+    const now = new Date();
+    for (const vm of vms.rows) {
+      // Generate hourly CPU and memory metrics for the last 24 hours
+      for (let hoursAgo = 0; hoursAgo < 24; hoursAgo++) {
+        const timestamp = new Date(now);
+        timestamp.setHours(timestamp.getHours() - hoursAgo);
+
+        // Realistic CPU: higher during business hours (8-18), lower at night
+        const hour = timestamp.getHours();
+        const isBusinessHour = hour >= 8 && hour <= 18;
+        const baseCpu = isBusinessHour ? 30 + Math.random() * 50 : 5 + Math.random() * 25;
+        const cpuValue = Math.round(baseCpu * 100) / 100;
+
+        // Realistic memory: generally 40-85% utilization
+        const memValue = Math.round((40 + Math.random() * 45) * 100) / 100;
+
+        // Check if metric already exists for this resource + timestamp (within the hour)
+        const tsStr = timestamp.toISOString();
+
+        await query(
+          `INSERT INTO usage_metrics (resource_id, metric_name, metric_value, unit, timestamp)
+           VALUES ($1, 'cpu_utilization', $2, 'Percent', $3)
+           ON CONFLICT DO NOTHING`,
+          [vm.id, cpuValue, tsStr]
+        );
+        metricsInserted++;
+
+        await query(
+          `INSERT INTO usage_metrics (resource_id, metric_name, metric_value, unit, timestamp)
+           VALUES ($1, 'memory_utilization', $2, 'Percent', $3)
+           ON CONFLICT DO NOTHING`,
+          [vm.id, memValue, tsStr]
+        );
+        metricsInserted++;
+      }
+    }
+
+    console.log(`[MockSync]   -> ${metricsInserted} metric points inserted for ${vms.rows.length} VMs`);
+    report.steps.metrics = { inserted: metricsInserted, vmsProcessed: vms.rows.length };
+
+    // ── Step 3: Update Budget Spend ──────────────────────────────────────
+
+    console.log('[MockSync] Step 3: Updating budget spend...');
+    await updateBudgetSpend();
+
+    const budgetResult = await query(
+      `SELECT COUNT(*) as count FROM budgets WHERE is_active = true`
+    );
+    const budgetsUpdated = parseInt(budgetResult.rows[0].count) || 0;
+
+    console.log(`[MockSync]   -> ${budgetsUpdated} active budgets recomputed`);
+    report.steps.budgets = { updated: budgetsUpdated };
+
+    // ── Step 4: Run Anomaly Detection ────────────────────────────────────
+
+    console.log('[MockSync] Step 4: Running anomaly detection...');
+    const anomalyCount = await detectAnomalies();
+
+    console.log(`[MockSync]   -> ${anomalyCount} anomalies detected`);
+    report.steps.anomalies = { count: anomalyCount };
+
+    // ── Step 5: Check Budget Alerts ──────────────────────────────────────
+
+    console.log('[MockSync] Step 5: Checking budget alerts...');
+    const alertResult = await checkBudgetAlerts();
+
+    console.log(`[MockSync]   -> ${alertResult.alertsCreated} budget alerts created`);
+    report.steps.alerts = { created: alertResult.alertsCreated };
+
+    // ── Finish ───────────────────────────────────────────────────────────
+
+    report.finished = new Date();
+    report.durationMs = report.finished - report.started;
+
+    console.log(`\n========== Mock Sync Complete (${report.durationMs}ms) ==========\n`);
+
+    // Store a system alert marking sync success
+    await query(
+      `INSERT INTO alerts (type, severity, title, message, metadata)
+       VALUES ('system', 'low', 'Mock data sync completed', $1, $2)`,
+      [
+        `Mock sync completed in ${(report.durationMs / 1000).toFixed(1)}s`,
+        JSON.stringify(report.steps),
+      ]
+    );
+
+    return report;
+  } catch (err) {
+    console.error('[MockSync] Fatal error:', err);
+    await query(
+      `INSERT INTO alerts (type, severity, title, message)
+       VALUES ('system', 'high', 'Mock data sync failed', $1)`,
+      [err.message]
+    );
+    throw err;
+  } finally {
+    _syncing = false;
+  }
+}
+
+// ─── Full Sync Orchestrator ─────────────────────────────────────────────────
+
 /**
  * Full sync: subscriptions -> resources -> costs -> metrics -> recommendations -> anomalies -> budget checks.
+ * In mock mode, delegates to runMockSync() for local data generation.
  */
 async function runFullSync() {
   if (_syncing) {
@@ -26,8 +251,8 @@ async function runFullSync() {
   }
 
   if (!isAzureLive()) {
-    console.log('[Sync] AZURE_USE_MOCK=true — skipping live sync');
-    return { skipped: true, reason: 'mock mode' };
+    console.log('[Sync] AZURE_USE_MOCK=true — running mock sync');
+    return runMockSync();
   }
 
   _syncing = true;
@@ -36,26 +261,26 @@ async function runFullSync() {
   try {
     console.log('\n========== Azure Data Sync Started ==========\n');
 
-    // 1 ── Sync Subscriptions
+    // 1 -- Sync Subscriptions
     report.steps.subscriptions = await syncSubscriptions();
 
-    // 2 ── Sync Resources
+    // 2 -- Sync Resources
     report.steps.resources = await syncResources();
 
-    // 3 ── Sync Cost Records
+    // 3 -- Sync Cost Records
     const days = parseInt(process.env.SYNC_COST_DAYS || '30');
     report.steps.costs = await syncCosts(days);
 
-    // 4 ── Sync VM Metrics
+    // 4 -- Sync VM Metrics
     report.steps.metrics = await syncVmMetrics();
 
-    // 5 ── Sync Advisor Recommendations
+    // 5 -- Sync Advisor Recommendations
     report.steps.recommendations = await syncRecommendations();
 
-    // 6 ── Run Anomaly Detection
+    // 6 -- Run Anomaly Detection
     report.steps.anomalies = await runAnomalyDetection();
 
-    // 7 ── Check Budget Alerts
+    // 7 -- Check Budget Alerts
     report.steps.budgets = await checkBudgetAlerts();
 
     report.finished = new Date();

@@ -65,6 +65,26 @@ app.get('/api/config/auth', (req, res) => {
   });
 });
 
+// ─── Azure services information ─────────────────────────────────────────────
+
+app.get('/api/azure/services', authenticate, (req, res) => {
+  res.json({
+    services: [
+      { name: 'Azure Cost Management API', status: 'connected', description: 'Fetches cost and billing data' },
+      { name: 'Azure Resource Graph', status: 'connected', description: 'Queries Azure resources' },
+      { name: 'Azure Monitor', status: 'connected', description: 'Collects performance metrics' },
+      { name: 'Azure Active Directory', status: process.env.AZURE_AD_ENABLED === 'true' ? 'connected' : 'disabled', description: 'Handles authentication' },
+      { name: 'Azure Advisor', status: 'connected', description: 'Optimization recommendations' },
+      { name: 'Azure Subscriptions', status: 'connected', description: 'Multi-subscription monitoring' },
+    ],
+    credentials: {
+      tenant_id: process.env.AZURE_TENANT_ID ? '••••' + process.env.AZURE_TENANT_ID.slice(-4) : null,
+      client_id: process.env.AZURE_CLIENT_ID ? '••••' + process.env.AZURE_CLIENT_ID.slice(-4) : null,
+      subscription_count: (process.env.AZURE_SUBSCRIPTION_IDS || '').split(',').filter(Boolean).length,
+    }
+  });
+});
+
 // ─── Health check ────────────────────────────────────────────────────────────
 
 app.get('/api/health', async (req, res) => {
@@ -107,7 +127,7 @@ const start = async () => {
 
   app.listen(PORT, () => {
     console.log(`\n  ╔══════════════════════════════════════════╗`);
-    console.log(`  ║     AzureCost Monitor API Server         ║`);
+    console.log(`  ║     CloudFlow API Server                 ║`);
     console.log(`  ╠══════════════════════════════════════════╣`);
     console.log(`  ║  Port:       ${String(PORT).padEnd(28)}║`);
     console.log(`  ║  Env:        ${(process.env.NODE_ENV || 'development').padEnd(28)}║`);

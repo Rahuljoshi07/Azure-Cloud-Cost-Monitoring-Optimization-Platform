@@ -190,10 +190,12 @@ export default function Reports() {
                   formatter={(v) => formatCurrency(v)}
                   contentStyle={{
                     borderRadius: '12px',
-                    border: 'none',
+                    border: '1px solid rgba(148,163,184,0.2)',
                     boxShadow: '0 4px 24px rgba(0,0,0,0.12)',
                     padding: '10px 14px',
+                    backgroundColor: 'var(--tooltip-bg, #fff)',
                   }}
+                  wrapperClassName="recharts-tooltip-dark"
                 />
                 <Area type="monotone" dataKey="actual" name="Actual" stroke="#6366f1" strokeWidth={2.5} fill="url(#fActual)" dot={false} activeDot={{ r: 5, strokeWidth: 2, stroke: '#fff' }} />
                 <Area type="monotone" dataKey="predicted" name="Predicted" stroke="#a855f7" strokeWidth={2.5} strokeDasharray="6 4" fill="url(#fPredicted)" dot={false} activeDot={{ r: 5, strokeWidth: 2, stroke: '#fff' }} />

@@ -278,3 +278,37 @@
     @apply bg-white dark:bg-navy-700 text-surface-900 dark:text-white shadow-soft;
   }
 }
+
+/* ────── Dark mode CSS variables for Recharts & third-party ────── */
+:root {
+  --tooltip-bg: #fff;
+  --tooltip-text: #1e293b;
+}
+.dark {
+  --tooltip-bg: #14142b;
+  --tooltip-text: #e2e8f0;
+}
+
+/* Recharts tooltip dark-mode overrides */
+.dark .recharts-tooltip-dark .recharts-default-tooltip {
+  background-color: #14142b !important;
+  border-color: rgba(99,102,241,0.2) !important;
+  color: #e2e8f0 !important;
+}
+.dark .recharts-tooltip-dark .recharts-default-tooltip .recharts-tooltip-label {
+  color: #94a3b8 !important;
+}
+.dark .recharts-tooltip-dark .recharts-default-tooltip .recharts-tooltip-item {
+  color: #e2e8f0 !important;
+}
+
+/* Select dropdown dark mode */
+.dark select option {
+  background-color: #14142b;
+  color: #e2e8f0;
+}
+
+/* Date input dark mode */
+.dark input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}

@@ -37,9 +37,9 @@ export default function App() {
 
   if (!ready) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface-50 dark:bg-surface-950">
+      <div className="min-h-screen flex items-center justify-center bg-[#f0f2f7] dark:bg-[#0a0a1a]">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-3 border-azure-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-10 h-10 border-[3px] border-brand-500 border-t-transparent rounded-full animate-spin" />
           <p className="text-sm text-surface-500">Initializing...</p>
         </div>
       </div>
