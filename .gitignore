@@ -63,3 +63,7 @@ id_ed25519
 .token
 *.token
 .auth
+
+# Audit logs (contain IP addresses and user activity)
+logs/
+*.audit.log
