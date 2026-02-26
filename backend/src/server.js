@@ -1,4 +1,9 @@
 require('dotenv').config();
+
+// SECURITY LAYER 3: Install credential masking BEFORE anything else logs
+const { installLogMasking, maskObject } = require('./middleware/credentialMask');
+installLogMasking();
+
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -19,6 +24,15 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use('/api/', apiLimiter);
+
+// SECURITY LAYER 5: Credential Firewall — sanitize ALL API responses
+app.use((req, res, next) => {
+  const originalJson = res.json.bind(res);
+  res.json = (body) => {
+    return originalJson(maskObject(body));
+  };
+  next();
+});
 
 // ─── Routes ──────────────────────────────────────────────────────────────────
 

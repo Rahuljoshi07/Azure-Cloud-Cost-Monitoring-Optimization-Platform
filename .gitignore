@@ -1,5 +1,4 @@
 node_modules/
-.env
 dist/
 build/
 *.log
@@ -17,3 +16,50 @@ tmpclaude-*
 *.tgz
 package-lock.json
 .pgdata/
+
+# ══════════════════════════════════════════════════════
+# SECURITY: Block ALL secret/credential files from Git
+# ══════════════════════════════════════════════════════
+
+# Environment files (all variations)
+.env
+.env.*
+!.env.example
+*.env
+.env.local
+.env.development
+.env.production
+.env.staging
+.env.test
+.env.backup
+
+# Encrypted credential vaults
+.env.vault
+.env.enc
+.credentials
+credentials.json
+secrets.json
+*.secret
+*.secrets
+*.key
+*.pem
+*.p12
+*.pfx
+*.cert
+
+# Azure specific
+azure.json
+azureauth.json
+.azure/
+servicePrincipal.json
+
+# SSH keys
+id_rsa
+id_rsa.pub
+id_ed25519
+*.pub
+
+# Token files
+.token
+*.token
+.auth
