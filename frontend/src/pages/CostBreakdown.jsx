@@ -6,7 +6,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts'
 
-const CHART_COLORS = ['#0078d4', '#06b6d4', '#8b5cf6', '#f43f5e', '#10b981', '#f59e0b', '#ff8c00', '#ec4899']
+const CHART_COLORS = ['#6366f1', '#06b6d4', '#a855f7', '#f43f5e', '#10b981', '#f59e0b', '#ec4899', '#14b8a6']
 
 function formatCurrency(v) {
   if (v >= 1000) return `$${(v / 1000).toFixed(1)}K`
@@ -16,7 +16,7 @@ function formatCurrency(v) {
 function CustomTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null
   return (
-    <div className="glass-card p-3 shadow-card-elevated border border-surface-200/80 dark:border-surface-700/80 backdrop-blur-xl">
+    <div className="card-glass p-3 shadow-elevated border border-surface-200/80 dark:border-navy-700/80 backdrop-blur-xl">
       <p className="text-[10px] font-bold text-surface-500 dark:text-surface-400 mb-1.5 uppercase tracking-wider">{label}</p>
       {payload.map((entry, i) => (
         <div key={i} className="flex items-center gap-2">
@@ -32,17 +32,17 @@ function CustomTooltip({ active, payload, label }) {
 
 function SummaryCard({ title, value, icon: Icon, color, loading, index = 0 }) {
   const colorMap = {
-    blue: { bg: 'bg-azure-100 dark:bg-azure-900/30', text: 'text-azure-600 dark:text-azure-400', card: 'kpi-card-blue' },
-    green: { bg: 'bg-emerald-100 dark:bg-emerald-900/30', text: 'text-emerald-600 dark:text-emerald-400', card: 'kpi-card-green' },
-    amber: { bg: 'bg-amber-100 dark:bg-amber-900/30', text: 'text-amber-600 dark:text-amber-400', card: 'kpi-card-amber' },
-    purple: { bg: 'bg-purple-100 dark:bg-purple-900/30', text: 'text-purple-600 dark:text-purple-400', card: 'kpi-card-purple' },
-    cyan: { bg: 'bg-cyan-100 dark:bg-cyan-900/30', text: 'text-cyan-600 dark:text-cyan-400', card: 'kpi-card-cyan' },
-    red: { bg: 'bg-red-100 dark:bg-red-900/30', text: 'text-red-600 dark:text-red-400', card: 'kpi-card-red' },
+    brand: { bg: 'bg-brand-100 dark:bg-brand-900/30', text: 'text-brand-600 dark:text-brand-400', card: 'metric-card-brand' },
+    emerald: { bg: 'bg-emerald-100 dark:bg-emerald-900/30', text: 'text-emerald-600 dark:text-emerald-400', card: 'metric-card-emerald' },
+    amber: { bg: 'bg-amber-100 dark:bg-amber-900/30', text: 'text-amber-600 dark:text-amber-400', card: 'metric-card-amber' },
+    purple: { bg: 'bg-purple-100 dark:bg-purple-900/30', text: 'text-purple-600 dark:text-purple-400', card: 'metric-card-purple' },
+    cyan: { bg: 'bg-cyan-100 dark:bg-cyan-900/30', text: 'text-cyan-600 dark:text-cyan-400', card: 'metric-card-cyan' },
+    rose: { bg: 'bg-rose-100 dark:bg-rose-900/30', text: 'text-rose-600 dark:text-rose-400', card: 'metric-card-rose' },
   }
-  const c = colorMap[color] || colorMap.blue
+  const c = colorMap[color] || colorMap.brand
 
   return (
-    <div className={`kpi-card ${c.card} animate-slide-up stagger-${index + 1}`}>
+    <div className={`metric-card ${c.card} animate-enter stagger-${index + 1}`}>
       {loading ? (
         <div className="space-y-3">
           <div className="skeleton h-4 w-24" />
@@ -56,7 +56,7 @@ function SummaryCard({ title, value, icon: Icon, color, loading, index = 0 }) {
               <Icon className={`w-5 h-5 ${c.text}`} />
             </div>
           </div>
-          <p className="number-lg text-surface-900 dark:text-white">{value}</p>
+          <p className="num-lg text-surface-900 dark:text-white">{value}</p>
         </>
       )}
     </div>
@@ -154,7 +154,7 @@ export default function CostBreakdown() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="page-header mb-0">
           <div className="flex items-center gap-3 mb-1">
-            <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-glow-blue">
+            <div className="w-10 h-10 rounded-xl gradient-brand flex items-center justify-center shadow-neon-brand">
               <BarChart3 className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -163,15 +163,15 @@ export default function CostBreakdown() {
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-1.5 p-1 bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 shadow-sm">
+        <div className="flex items-center gap-1.5 p-1 bg-white dark:bg-navy-800 rounded-xl border border-surface-200 dark:border-navy-700 shadow-sm">
           {['7', '14', '30', '60', '90'].map(p => (
             <button
               key={p}
               onClick={() => setPeriod(p)}
               className={`px-3.5 py-2 rounded-lg text-xs font-semibold transition-all duration-200 ${
                 period === p
-                  ? 'gradient-primary text-white shadow-sm'
-                  : 'text-surface-500 dark:text-surface-400 hover:text-surface-900 dark:hover:text-white hover:bg-surface-50 dark:hover:bg-surface-700'
+                  ? 'gradient-brand text-white shadow-sm'
+                  : 'text-surface-500 dark:text-surface-400 hover:text-surface-900 dark:hover:text-white hover:bg-surface-50 dark:hover:bg-navy-700'
               }`}
             >
               {p}d
@@ -182,7 +182,7 @@ export default function CostBreakdown() {
 
       {/* Summary KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <SummaryCard title="Total Cost" value={formatCurrency(totalCost)} icon={DollarSign} color="blue" loading={loading} index={0} />
+        <SummaryCard title="Total Cost" value={formatCurrency(totalCost)} icon={DollarSign} color="brand" loading={loading} index={0} />
         <SummaryCard title="Subscriptions" value={subscriptionCount} icon={Layers} color="purple" loading={loading} index={1} />
         <SummaryCard title="Services" value={serviceCount} icon={Globe} color="cyan" loading={loading} index={2} />
         <SummaryCard title="Top Resources" value={resourceCount} icon={TrendingUp} color="amber" loading={loading} index={3} />
@@ -191,14 +191,14 @@ export default function CostBreakdown() {
       {/* Cost by Subscription & Cost by Tag */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Cost by Subscription */}
-        <div className="chart-container animate-slide-up stagger-1">
+        <div className="chart-card animate-enter stagger-1">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="chart-title">Cost by Subscription</h3>
-              <p className="chart-subtitle">Spending distribution across subscriptions</p>
+              <h3 className="chart-heading">Cost by Subscription</h3>
+              <p className="chart-subheading">Spending distribution across subscriptions</p>
             </div>
-            <div className="w-9 h-9 rounded-xl bg-azure-50 dark:bg-azure-900/20 flex items-center justify-center">
-              <Layers className="w-4 h-4 text-azure-500" />
+            <div className="w-9 h-9 rounded-xl bg-brand-50 dark:bg-brand-900/20 flex items-center justify-center">
+              <Layers className="w-4 h-4 text-brand-500" />
             </div>
           </div>
           {loading ? (
@@ -220,7 +220,7 @@ export default function CostBreakdown() {
                     </linearGradient>
                   ))}
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="currentColor" className="text-surface-100 dark:text-surface-800" />
+                <CartesianGrid strokeDasharray="3 3" stroke="currentColor" className="text-surface-100 dark:text-navy-800" />
                 <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} tickFormatter={formatCurrency} />
                 <Tooltip content={<CustomTooltip />} />
@@ -235,17 +235,17 @@ export default function CostBreakdown() {
         </div>
 
         {/* Cost by Tag */}
-        <div className="chart-container animate-slide-up stagger-2">
+        <div className="chart-card animate-enter stagger-2">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="chart-title">Cost by Tag</h3>
-              <p className="chart-subtitle">Spending grouped by tag values</p>
+              <h3 className="chart-heading">Cost by Tag</h3>
+              <p className="chart-subheading">Spending grouped by tag values</p>
             </div>
             <div className="flex items-center gap-2">
               <select
                 value={tagKey}
                 onChange={(e) => setTagKey(e.target.value)}
-                className="input-field w-auto text-xs py-1.5 px-3"
+                className="input w-auto text-xs py-1.5 px-3"
               >
                 <option value="environment">Environment</option>
                 <option value="department">Department</option>
@@ -292,11 +292,11 @@ export default function CostBreakdown() {
       </div>
 
       {/* Cost by Service - Full Width */}
-      <div className="chart-container animate-slide-up stagger-3">
+      <div className="chart-card animate-enter stagger-3">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="chart-title">Cost by Service</h3>
-            <p className="chart-subtitle">Breakdown of spending across Azure services</p>
+            <h3 className="chart-heading">Cost by Service</h3>
+            <p className="chart-subheading">Breakdown of spending across Azure services</p>
           </div>
           <div className="w-9 h-9 rounded-xl bg-cyan-50 dark:bg-cyan-900/20 flex items-center justify-center">
             <Globe className="w-4 h-4 text-cyan-500" />
@@ -322,7 +322,7 @@ export default function CostBreakdown() {
                   </linearGradient>
                 ))}
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="currentColor" className="text-surface-100 dark:text-surface-800" horizontal={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="currentColor" className="text-surface-100 dark:text-navy-800" horizontal={false} />
               <XAxis type="number" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} tickFormatter={formatCurrency} />
               <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} width={140} />
               <Tooltip content={<CustomTooltip />} />
@@ -337,19 +337,19 @@ export default function CostBreakdown() {
       </div>
 
       {/* Top Expensive Resources Table */}
-      <div className="table-container animate-slide-up stagger-4">
-        <div className="p-5 border-b border-surface-200 dark:border-surface-700 flex items-center justify-between">
+      <div className="data-table animate-enter stagger-4">
+        <div className="p-5 border-b border-surface-200 dark:border-navy-700 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-red-50 dark:bg-red-900/20 flex items-center justify-center">
               <DollarSign className="w-4 h-4 text-red-500" />
             </div>
             <div>
-              <h3 className="chart-title">Top Expensive Resources</h3>
-              <p className="chart-subtitle">Highest cost resources in the selected period</p>
+              <h3 className="chart-heading">Top Expensive Resources</h3>
+              <p className="chart-subheading">Highest cost resources in the selected period</p>
             </div>
           </div>
           {!loading && topResources.length > 0 && (
-            <span className="text-xs font-semibold text-surface-400 dark:text-surface-500 bg-surface-100 dark:bg-surface-800 px-3 py-1.5 rounded-lg">
+            <span className="text-xs font-semibold text-surface-400 dark:text-surface-500 bg-surface-100 dark:bg-navy-800 px-3 py-1.5 rounded-lg">
               {topResources.length} resources
             </span>
           )}
@@ -374,7 +374,7 @@ export default function CostBreakdown() {
                 {topResources.map((r, i) => (
                   <tr key={i}>
                     <td>
-                      <span className="inline-flex items-center justify-center w-6 h-6 rounded-lg bg-surface-100 dark:bg-surface-800 text-[11px] font-bold text-surface-500 dark:text-surface-400">
+                      <span className="inline-flex items-center justify-center w-6 h-6 rounded-lg bg-surface-100 dark:bg-navy-800 text-[11px] font-bold text-surface-500 dark:text-surface-400">
                         {i + 1}
                       </span>
                     </td>
@@ -382,7 +382,7 @@ export default function CostBreakdown() {
                       <span className="font-semibold text-surface-900 dark:text-white">{r.name}</span>
                     </td>
                     <td>
-                      <span className="badge bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400">
+                      <span className="badge bg-surface-100 dark:bg-navy-800 text-surface-600 dark:text-surface-400">
                         {r.type?.split('/').pop()}
                       </span>
                     </td>

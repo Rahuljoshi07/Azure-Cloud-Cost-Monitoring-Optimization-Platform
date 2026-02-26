@@ -39,16 +39,16 @@ export default function Settings() {
   }
 
   const getStatusDotClass = (status, expected) => {
-    if (!status) return 'status-dot'
-    if (status === expected) return 'status-dot status-dot-active'
-    return 'status-dot status-dot-warning'
+    if (!status) return 'dot'
+    if (status === expected) return 'dot dot-active'
+    return 'dot dot-warning'
   }
 
   return (
     <div className="space-y-8 max-w-4xl">
       {/* Page Header */}
       <div className="page-header flex items-start gap-4">
-        <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center shadow-glow-blue flex-shrink-0">
+        <div className="w-12 h-12 rounded-xl gradient-brand flex items-center justify-center shadow-neon-brand flex-shrink-0">
           <SettingsIcon className="w-6 h-6 text-white" />
         </div>
         <div>
@@ -58,15 +58,15 @@ export default function Settings() {
       </div>
 
       {/* System Status */}
-      <div className="glass-card p-6 animate-slide-up" style={{ animationDelay: '0ms' }}>
+      <div className="card card-glass p-6 animate-enter" style={{ animationDelay: '0ms' }}>
         <h3 className="text-base font-semibold text-surface-900 dark:text-white mb-5 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg gradient-primary flex items-center justify-center">
+          <div className="w-9 h-9 rounded-lg gradient-brand flex items-center justify-center">
             <Cloud className="w-4.5 h-4.5 text-white" />
           </div>
           System Status
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="kpi-card">
+          <div className="metric-card metric-card-emerald">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
@@ -80,21 +80,21 @@ export default function Settings() {
               {health?.database || 'checking...'}
             </p>
           </div>
-          <div className="kpi-card">
+          <div className="metric-card metric-card-brand">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-azure-100 dark:bg-azure-900/30 flex items-center justify-center">
-                  <Cloud className="w-4 h-4 text-azure-600 dark:text-azure-400" />
+                <div className="w-8 h-8 rounded-lg bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center">
+                  <Cloud className="w-4 h-4 text-brand-600 dark:text-brand-400" />
                 </div>
                 <span className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase">Azure Mode</span>
               </div>
-              <div className={health?.azure_mode === 'live' ? 'status-dot status-dot-active' : 'status-dot status-dot-warning'} />
+              <div className={health?.azure_mode === 'live' ? 'dot dot-active' : 'dot dot-warning'} />
             </div>
-            <p className={`text-sm font-semibold mt-1 ${health?.azure_mode === 'live' ? 'text-azure-600 dark:text-azure-400' : 'text-amber-600 dark:text-amber-400'}`}>
+            <p className={`text-sm font-semibold mt-1 ${health?.azure_mode === 'live' ? 'text-brand-600 dark:text-brand-400' : 'text-amber-600 dark:text-amber-400'}`}>
               {health?.azure_mode?.toUpperCase() || 'checking...'}
             </p>
           </div>
-          <div className="kpi-card">
+          <div className="metric-card metric-card-purple">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
@@ -102,13 +102,13 @@ export default function Settings() {
                 </div>
                 <span className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase">Azure AD</span>
               </div>
-              <div className={health?.azure_ad === 'enabled' ? 'status-dot status-dot-active' : 'status-dot'} />
+              <div className={health?.azure_ad === 'enabled' ? 'dot dot-active' : 'dot'} />
             </div>
             <p className={`text-sm font-semibold mt-1 ${health?.azure_ad === 'enabled' ? 'text-emerald-600 dark:text-emerald-400' : 'text-surface-500'}`}>
               {health?.azure_ad?.toUpperCase() || 'checking...'}
             </p>
           </div>
-          <div className="kpi-card">
+          <div className="metric-card metric-card-amber">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
@@ -125,14 +125,14 @@ export default function Settings() {
       </div>
 
       {/* Divider */}
-      <div className="border-t border-surface-200 dark:border-surface-800" />
+      <div className="border-t border-surface-200 dark:border-navy-800" />
 
       {/* Data Sync */}
       {user?.role === 'admin' && (
         <>
-          <div className="glass-card p-6 animate-slide-up" style={{ animationDelay: '100ms' }}>
+          <div className="card card-glass p-6 animate-enter" style={{ animationDelay: '100ms' }}>
             <h3 className="text-base font-semibold text-surface-900 dark:text-white mb-4 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg gradient-primary flex items-center justify-center">
+              <div className="w-9 h-9 rounded-lg gradient-brand flex items-center justify-center">
                 <RefreshCw className="w-4.5 h-4.5 text-white" />
               </div>
               Azure Data Sync
@@ -149,14 +149,14 @@ export default function Settings() {
             <button
               onClick={handleSync}
               disabled={syncing}
-              className="btn-primary flex items-center gap-2 disabled:opacity-50 shadow-glow-blue"
+              className="btn-brand flex items-center gap-2 disabled:opacity-50 shadow-neon-brand"
             >
               <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
               {syncing ? 'Syncing...' : 'Run Full Sync Now'}
             </button>
 
             {syncResult && (
-              <div className={`mt-5 glass-card-elevated p-5 ${
+              <div className={`mt-5 card-elevated card-glass p-5 ${
                 syncResult.success
                   ? 'border-l-4 border-l-emerald-500'
                   : 'border-l-4 border-l-red-500'
@@ -184,20 +184,20 @@ export default function Settings() {
           </div>
 
           {/* Divider */}
-          <div className="border-t border-surface-200 dark:border-surface-800" />
+          <div className="border-t border-surface-200 dark:border-navy-800" />
         </>
       )}
 
       {/* User Info */}
-      <div className="glass-card p-6 animate-slide-up" style={{ animationDelay: '200ms' }}>
+      <div className="card card-glass p-6 animate-enter" style={{ animationDelay: '200ms' }}>
         <h3 className="text-base font-semibold text-surface-900 dark:text-white mb-5 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg gradient-primary flex items-center justify-center">
+          <div className="w-9 h-9 rounded-lg gradient-brand flex items-center justify-center">
             <User className="w-4.5 h-4.5 text-white" />
           </div>
           Account
         </h3>
-        <div className="flex items-center gap-4 mb-6 pb-5 border-b border-surface-100 dark:border-surface-800">
-          <div className="w-14 h-14 rounded-full gradient-primary flex items-center justify-center text-white text-xl font-bold shadow-glow-blue">
+        <div className="flex items-center gap-4 mb-6 pb-5 border-b border-surface-100 dark:border-navy-800">
+          <div className="w-14 h-14 rounded-full gradient-brand flex items-center justify-center text-white text-xl font-bold shadow-neon-brand">
             {user?.full_name?.charAt(0)?.toUpperCase() || 'U'}
           </div>
           <div>
@@ -216,7 +216,7 @@ export default function Settings() {
             { label: 'Email Address', value: user?.email },
             { label: 'Account Role', value: user?.role },
           ].map(({ label, value }) => (
-            <div key={label} className="flex items-center justify-between py-2.5 border-b border-surface-100 dark:border-surface-800 last:border-b-0">
+            <div key={label} className="flex items-center justify-between py-2.5 border-b border-surface-100 dark:border-navy-800 last:border-b-0">
               <span className="text-sm text-surface-500 dark:text-surface-400">{label}</span>
               <span className="text-sm font-medium text-surface-900 dark:text-white capitalize">{value}</span>
             </div>

@@ -20,8 +20,8 @@ function getStatusColor(status) {
   switch (status) {
     case 'running': return 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400'
     case 'stopped': return 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
-    case 'deallocated': return 'bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400'
-    default: return 'bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400'
+    case 'deallocated': return 'bg-surface-100 dark:bg-navy-800 text-surface-600 dark:text-surface-400'
+    default: return 'bg-surface-100 dark:bg-navy-800 text-surface-600 dark:text-surface-400'
   }
 }
 
@@ -63,12 +63,12 @@ export default function Resources() {
       {/* KPI Summary Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: 'Total Resources', value: pagination.total, color: 'blue', icon: Server, iconBg: 'bg-azure-100 dark:bg-azure-900/30', iconColor: 'text-azure-600 dark:text-azure-400' },
-          { label: 'Running', value: resources.filter(r => r.status === 'running').length, color: 'green', icon: Monitor, iconBg: 'bg-emerald-100 dark:bg-emerald-900/30', iconColor: 'text-emerald-600 dark:text-emerald-400' },
-          { label: 'Stopped', value: resources.filter(r => r.status === 'stopped').length, color: 'red', icon: Cloud, iconBg: 'bg-red-100 dark:bg-red-900/30', iconColor: 'text-red-600 dark:text-red-400' },
+          { label: 'Total Resources', value: pagination.total, color: 'brand', icon: Server, iconBg: 'bg-brand-100 dark:bg-brand-900/30', iconColor: 'text-brand-600 dark:text-brand-400' },
+          { label: 'Running', value: resources.filter(r => r.status === 'running').length, color: 'emerald', icon: Monitor, iconBg: 'bg-emerald-100 dark:bg-emerald-900/30', iconColor: 'text-emerald-600 dark:text-emerald-400' },
+          { label: 'Stopped', value: resources.filter(r => r.status === 'stopped').length, color: 'rose', icon: Cloud, iconBg: 'bg-rose-100 dark:bg-rose-900/30', iconColor: 'text-rose-600 dark:text-rose-400' },
           { label: 'Deallocated', value: resources.filter(r => r.status === 'deallocated').length, color: 'purple', icon: HardDrive, iconBg: 'bg-purple-100 dark:bg-purple-900/30', iconColor: 'text-purple-600 dark:text-purple-400' },
         ].map((item, i) => (
-          <div key={i} className={`kpi-card kpi-card-${item.color} animate-slide-up stagger-${i + 1}`}>
+          <div key={i} className={`metric-card metric-card-${item.color} animate-enter stagger-${i + 1}`}>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wide">{item.label}</p>
@@ -83,17 +83,17 @@ export default function Resources() {
       </div>
 
       {/* Search & Filter Bar */}
-      <div className="glass-card p-4 animate-slide-up stagger-2">
+      <div className="card-glass p-4 animate-enter stagger-2">
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400" />
-            <input type="text" placeholder="Search resources..." className="input-field pl-10"
+            <input type="text" placeholder="Search resources..." className="input pl-10"
               value={search} onChange={(e) => setSearch(e.target.value)} />
           </div>
           <div className="relative">
             <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400 pointer-events-none" />
             <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPagination(p => ({ ...p, page: 1 })) }}
-              className="input-field pl-10 w-full sm:w-auto pr-8 appearance-none cursor-pointer">
+              className="input pl-10 w-full sm:w-auto pr-8 appearance-none cursor-pointer">
               <option value="">All Status</option>
               <option value="running">Running</option>
               <option value="stopped">Stopped</option>
@@ -104,7 +104,7 @@ export default function Resources() {
       </div>
 
       {/* Resource Table */}
-      <div className="table-container animate-slide-up stagger-3">
+      <div className="data-table animate-enter stagger-3">
         <div className="overflow-x-auto">
           <table>
             <thead>
@@ -150,8 +150,8 @@ export default function Resources() {
                   <tr key={r.id}>
                     <td>
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-azure-50 dark:bg-azure-900/30 flex items-center justify-center">
-                          <IconComp className="w-4 h-4 text-azure-600 dark:text-azure-400" />
+                        <div className="w-8 h-8 rounded-lg bg-brand-50 dark:bg-brand-900/30 flex items-center justify-center">
+                          <IconComp className="w-4 h-4 text-brand-600 dark:text-brand-400" />
                         </div>
                         <div>
                           <p className="font-semibold text-surface-900 dark:text-white text-sm">{r.name}</p>
@@ -160,7 +160,7 @@ export default function Resources() {
                       </div>
                     </td>
                     <td>
-                      <span className="text-xs px-2 py-1 rounded-md bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400">
+                      <span className="text-xs px-2 py-1 rounded-md bg-surface-100 dark:bg-navy-800 text-surface-600 dark:text-surface-400">
                         {r.type?.split('/').pop()}
                       </span>
                     </td>
@@ -176,7 +176,7 @@ export default function Resources() {
                     <td>
                       <div className="flex flex-wrap gap-1">
                         {r.tags && Object.entries(typeof r.tags === 'string' ? JSON.parse(r.tags) : r.tags).slice(0, 2).map(([k, v]) => (
-                          <span key={k} className="text-[10px] font-semibold px-2 py-1 rounded bg-azure-50 dark:bg-azure-900/20 text-azure-600 dark:text-azure-400">
+                          <span key={k} className="text-[10px] font-semibold px-2 py-1 rounded bg-brand-50 dark:bg-brand-900/20 text-brand-600 dark:text-brand-400">
                             {k}: {v}
                           </span>
                         ))}
@@ -190,7 +190,7 @@ export default function Resources() {
         </div>
 
         {/* Pagination */}
-        <div className="flex items-center justify-between p-4 border-t border-surface-200 dark:border-surface-700">
+        <div className="flex items-center justify-between p-4 border-t border-surface-200 dark:border-navy-700">
           <p className="text-sm text-surface-500 dark:text-surface-400">
             Showing {((pagination.page - 1) * 15) + 1} to {Math.min(pagination.page * 15, pagination.total)} of {pagination.total}
           </p>
@@ -202,7 +202,7 @@ export default function Resources() {
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <span className="text-sm font-medium text-surface-700 dark:text-surface-300 bg-white dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 px-3 py-1.5 min-w-[4rem] text-center">
+            <span className="text-sm font-medium text-surface-700 dark:text-surface-300 bg-white dark:bg-navy-800 rounded-xl border border-surface-200 dark:border-navy-700 px-3 py-1.5 min-w-[4rem] text-center">
               {pagination.page} / {pagination.pages}
             </span>
             <button

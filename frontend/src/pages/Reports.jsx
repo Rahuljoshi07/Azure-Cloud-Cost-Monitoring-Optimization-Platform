@@ -76,7 +76,7 @@ export default function Reports() {
       case 'high': return 'border-l-4 border-l-orange-500'
       case 'medium': return 'border-l-4 border-l-amber-500'
       case 'low': return 'border-l-4 border-l-emerald-500'
-      default: return 'border-l-4 border-l-surface-300'
+      default: return 'border-l-4 border-l-navy-300'
     }
   }
 
@@ -88,7 +88,7 @@ export default function Reports() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 p-1.5 bg-surface-100 dark:bg-surface-800 rounded-xl w-fit">
+      <div className="tab-bar">
         {[
           { id: 'overview', label: 'Forecast', icon: TrendingUp },
           { id: 'anomalies', label: 'Anomalies', icon: AlertTriangle },
@@ -96,11 +96,7 @@ export default function Reports() {
           { id: 'history', label: 'History', icon: Clock }
         ].map(({ id, label, icon: Icon }) => (
           <button key={id} onClick={() => setTab(id)}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${
-              tab === id
-                ? 'bg-white dark:bg-surface-700 text-surface-900 dark:text-white shadow-sm'
-                : 'text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
-            }`}>
+            className={`tab-item${tab === id ? ' active' : ''}`}>
             <Icon className="w-4 h-4" /> {label}
           </button>
         ))}
@@ -110,27 +106,27 @@ export default function Reports() {
       {tab === 'overview' && forecast && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="kpi-card animate-slide-up" style={{ animationDelay: '0ms' }}>
+            <div className="metric-card metric-card-brand animate-enter" style={{ animationDelay: '0ms' }}>
               <div className="flex items-center justify-between mb-3">
                 <p className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wide">30-Day Forecast</p>
-                <div className="w-9 h-9 rounded-lg bg-azure-100 dark:bg-azure-900/30 flex items-center justify-center">
-                  <DollarSign className="w-4.5 h-4.5 text-azure-600 dark:text-azure-400" />
+                <div className="w-9 h-9 rounded-lg bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center">
+                  <DollarSign className="w-4.5 h-4.5 text-brand-600 dark:text-brand-400" />
                 </div>
               </div>
-              <p className="text-2xl font-bold text-surface-900 dark:text-white">{formatCurrency(forecast.summary?.total_forecasted_cost || 0)}</p>
+              <p className="num-xl text-surface-900 dark:text-white">{formatCurrency(forecast.summary?.total_forecasted_cost || 0)}</p>
               <p className="text-xs text-surface-400 mt-1.5">Predicted total</p>
             </div>
-            <div className="kpi-card animate-slide-up" style={{ animationDelay: '60ms' }}>
+            <div className="metric-card metric-card-purple animate-enter" style={{ animationDelay: '60ms' }}>
               <div className="flex items-center justify-between mb-3">
                 <p className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wide">Daily Average</p>
                 <div className="w-9 h-9 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
                   <Activity className="w-4.5 h-4.5 text-purple-600 dark:text-purple-400" />
                 </div>
               </div>
-              <p className="text-2xl font-bold text-surface-900 dark:text-white">{formatCurrency(forecast.summary?.avg_daily_forecast || 0)}</p>
+              <p className="num-xl text-surface-900 dark:text-white">{formatCurrency(forecast.summary?.avg_daily_forecast || 0)}</p>
               <p className="text-xs text-surface-400 mt-1.5">Predicted daily cost</p>
             </div>
-            <div className="kpi-card animate-slide-up" style={{ animationDelay: '120ms' }}>
+            <div className="metric-card metric-card-emerald animate-enter" style={{ animationDelay: '120ms' }}>
               <div className="flex items-center justify-between mb-3">
                 <p className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wide">Trend</p>
                 <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${
@@ -146,7 +142,7 @@ export default function Reports() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <p className={`text-2xl font-bold capitalize ${
+                <p className={`num-xl capitalize ${
                   forecast.summary?.trend === 'increasing' ? 'text-red-500' : 'text-emerald-500'
                 }`}>{forecast.summary?.trend}</p>
               </div>
@@ -154,29 +150,29 @@ export default function Reports() {
             </div>
           </div>
 
-          <div className="chart-container animate-slide-up" style={{ animationDelay: '180ms' }}>
+          <div className="chart-card animate-enter" style={{ animationDelay: '180ms' }}>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-9 h-9 rounded-lg gradient-primary flex items-center justify-center">
+              <div className="w-9 h-9 rounded-lg gradient-brand flex items-center justify-center">
                 <BarChart3 className="w-4.5 h-4.5 text-white" />
               </div>
               <div>
-                <h3 className="chart-title">Cost Forecast</h3>
-                <p className="chart-subtitle">14-day historical vs. 14-day prediction</p>
+                <h3 className="chart-heading">Cost Forecast</h3>
+                <p className="chart-subheading">14-day historical vs. 14-day prediction</p>
               </div>
             </div>
             <ResponsiveContainer width="100%" height={350}>
               <AreaChart data={forecastData}>
                 <defs>
                   <linearGradient id="fActual" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#0078d4" stopOpacity={0.35} />
-                    <stop offset="100%" stopColor="#0078d4" stopOpacity={0} />
+                    <stop offset="0%" stopColor="#6366f1" stopOpacity={0.35} />
+                    <stop offset="100%" stopColor="#6366f1" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="fPredicted" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#8661c5" stopOpacity={0.35} />
-                    <stop offset="100%" stopColor="#8661c5" stopOpacity={0} />
+                    <stop offset="0%" stopColor="#a855f7" stopOpacity={0.35} />
+                    <stop offset="100%" stopColor="#a855f7" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="currentColor" className="text-surface-200 dark:text-surface-800" />
+                <CartesianGrid strokeDasharray="3 3" stroke="currentColor" className="text-surface-200 dark:text-navy-800" />
                 <XAxis
                   dataKey="date"
                   tick={{ fontSize: 11, fill: '#94a3b8' }}
@@ -199,9 +195,9 @@ export default function Reports() {
                     padding: '10px 14px',
                   }}
                 />
-                <Area type="monotone" dataKey="actual" name="Actual" stroke="#0078d4" strokeWidth={2.5} fill="url(#fActual)" dot={false} activeDot={{ r: 5, strokeWidth: 2, stroke: '#fff' }} />
-                <Area type="monotone" dataKey="predicted" name="Predicted" stroke="#8661c5" strokeWidth={2.5} strokeDasharray="6 4" fill="url(#fPredicted)" dot={false} activeDot={{ r: 5, strokeWidth: 2, stroke: '#fff' }} />
-                <Area type="monotone" dataKey="upper" name="Upper Bound" stroke="transparent" fill="#8661c5" fillOpacity={0.05} dot={false} />
+                <Area type="monotone" dataKey="actual" name="Actual" stroke="#6366f1" strokeWidth={2.5} fill="url(#fActual)" dot={false} activeDot={{ r: 5, strokeWidth: 2, stroke: '#fff' }} />
+                <Area type="monotone" dataKey="predicted" name="Predicted" stroke="#a855f7" strokeWidth={2.5} strokeDasharray="6 4" fill="url(#fPredicted)" dot={false} activeDot={{ r: 5, strokeWidth: 2, stroke: '#fff' }} />
+                <Area type="monotone" dataKey="upper" name="Upper Bound" stroke="transparent" fill="#a855f7" fillOpacity={0.05} dot={false} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -212,53 +208,53 @@ export default function Reports() {
       {tab === 'anomalies' && anomalies && (
         <div className="space-y-6">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="kpi-card animate-slide-up" style={{ animationDelay: '0ms' }}>
+            <div className="metric-card metric-card-brand animate-enter" style={{ animationDelay: '0ms' }}>
               <div className="flex items-center justify-between mb-2">
                 <p className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wide">Total</p>
-                <div className="w-8 h-8 rounded-lg bg-azure-100 dark:bg-azure-900/30 flex items-center justify-center">
-                  <BarChart3 className="w-4 h-4 text-azure-600 dark:text-azure-400" />
+                <div className="w-8 h-8 rounded-lg bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center">
+                  <BarChart3 className="w-4 h-4 text-brand-600 dark:text-brand-400" />
                 </div>
               </div>
-              <p className="text-2xl font-bold text-surface-900 dark:text-white">{anomalies.summary?.total || 0}</p>
+              <p className="num-xl text-surface-900 dark:text-white">{anomalies.summary?.total || 0}</p>
             </div>
-            <div className="kpi-card animate-slide-up" style={{ animationDelay: '60ms' }}>
+            <div className="metric-card metric-card-rose animate-enter" style={{ animationDelay: '60ms' }}>
               <div className="flex items-center justify-between mb-2">
                 <p className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wide">Critical</p>
                 <div className="w-8 h-8 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
                   <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400" />
                 </div>
               </div>
-              <p className="text-2xl font-bold text-red-600 dark:text-red-400">{anomalies.summary?.by_severity?.critical || 0}</p>
+              <p className="num-xl text-red-600 dark:text-red-400">{anomalies.summary?.by_severity?.critical || 0}</p>
             </div>
-            <div className="kpi-card animate-slide-up" style={{ animationDelay: '120ms' }}>
+            <div className="metric-card metric-card-amber animate-enter" style={{ animationDelay: '120ms' }}>
               <div className="flex items-center justify-between mb-2">
                 <p className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wide">High</p>
                 <div className="w-8 h-8 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
                   <TrendingUp className="w-4 h-4 text-orange-600 dark:text-orange-400" />
                 </div>
               </div>
-              <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">{anomalies.summary?.by_severity?.high || 0}</p>
+              <p className="num-xl text-orange-600 dark:text-orange-400">{anomalies.summary?.by_severity?.high || 0}</p>
             </div>
-            <div className="kpi-card animate-slide-up" style={{ animationDelay: '180ms' }}>
+            <div className="metric-card metric-card-amber animate-enter" style={{ animationDelay: '180ms' }}>
               <div className="flex items-center justify-between mb-2">
                 <p className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wide">Unresolved</p>
                 <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
                   <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                 </div>
               </div>
-              <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{anomalies.summary?.unresolved || 0}</p>
+              <p className="num-xl text-amber-600 dark:text-amber-400">{anomalies.summary?.unresolved || 0}</p>
             </div>
           </div>
 
-          <div className="table-container animate-slide-up" style={{ animationDelay: '240ms' }}>
-            <div className="p-5 border-b border-surface-200 dark:border-surface-700">
+          <div className="data-table animate-enter" style={{ animationDelay: '240ms' }}>
+            <div className="p-5 border-b border-surface-200 dark:border-navy-700">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg gradient-primary flex items-center justify-center">
+                <div className="w-9 h-9 rounded-lg gradient-brand flex items-center justify-center">
                   <AlertTriangle className="w-4.5 h-4.5 text-white" />
                 </div>
                 <div>
-                  <h3 className="chart-title">Detected Anomalies</h3>
-                  <p className="chart-subtitle">Cost anomalies detected in the last 30 days</p>
+                  <h3 className="chart-heading">Detected Anomalies</h3>
+                  <p className="chart-subheading">Cost anomalies detected in the last 30 days</p>
                 </div>
               </div>
             </div>
@@ -290,21 +286,21 @@ export default function Reports() {
 
       {/* Generate Tab */}
       {tab === 'generate' && (
-        <div className="max-w-lg animate-slide-up">
-          <div className="glass-card-elevated p-6">
+        <div className="max-w-lg animate-enter">
+          <div className="card-elevated card-glass p-6">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-9 h-9 rounded-lg gradient-primary flex items-center justify-center">
+              <div className="w-9 h-9 rounded-lg gradient-brand flex items-center justify-center">
                 <FileText className="w-4.5 h-4.5 text-white" />
               </div>
               <div>
-                <h3 className="chart-title">Generate New Report</h3>
-                <p className="chart-subtitle">Create a cost or optimization report</p>
+                <h3 className="chart-heading">Generate New Report</h3>
+                <p className="chart-subheading">Create a cost or optimization report</p>
               </div>
             </div>
             <form onSubmit={handleGenerate} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">Report Type</label>
-                <select className="input-field" value={reportForm.type}
+                <select className="input" value={reportForm.type}
                   onChange={(e) => setReportForm({ ...reportForm, type: e.target.value })}>
                   <option value="monthly">Monthly Cost Report</option>
                   <option value="cost_summary">Cost Summary</option>
@@ -314,16 +310,16 @@ export default function Reports() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">Start Date</label>
-                  <input type="date" className="input-field" required
+                  <input type="date" className="input" required
                     value={reportForm.period_start} onChange={(e) => setReportForm({ ...reportForm, period_start: e.target.value })} />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">End Date</label>
-                  <input type="date" className="input-field" required
+                  <input type="date" className="input" required
                     value={reportForm.period_end} onChange={(e) => setReportForm({ ...reportForm, period_end: e.target.value })} />
                 </div>
               </div>
-              <button type="submit" disabled={generating} className="btn-primary w-full flex items-center justify-center gap-2 shadow-glow-blue">
+              <button type="submit" disabled={generating} className="btn-brand w-full flex items-center justify-center gap-2 shadow-neon-brand">
                 {generating ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><FileText className="w-4 h-4" /> Generate Report</>}
               </button>
             </form>
@@ -333,7 +329,7 @@ export default function Reports() {
 
       {/* History Tab */}
       {tab === 'history' && (
-        <div className="table-container animate-slide-up">
+        <div className="data-table animate-enter">
           <div className="overflow-x-auto">
             <table>
               <thead>
@@ -345,7 +341,7 @@ export default function Reports() {
                 ) : reports.map((r) => (
                   <tr key={r.id}>
                     <td className="font-medium text-surface-900 dark:text-white">{r.name}</td>
-                    <td><span className="badge bg-azure-100 dark:bg-azure-900/30 text-azure-700 dark:text-azure-400 capitalize">{r.type.replace('_', ' ')}</span></td>
+                    <td><span className="badge badge-brand capitalize">{r.type.replace('_', ' ')}</span></td>
                     <td className="text-sm text-surface-500">{new Date(r.period_start).toLocaleDateString()} - {new Date(r.period_end).toLocaleDateString()}</td>
                     <td className="text-sm">{r.generated_by_name || 'System'}</td>
                     <td className="text-sm text-surface-400">{new Date(r.created_at).toLocaleString()}</td>

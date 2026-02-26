@@ -33,7 +33,7 @@ function TypeBadge({ type }) {
     budget: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400',
     anomaly: 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400',
     recommendation: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400',
-    system: 'bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400'
+    system: 'bg-surface-100 dark:bg-navy-800 text-surface-600 dark:text-surface-400'
   }
   return <span className={`badge ${colors[type] || colors.system}`}>{type}</span>
 }
@@ -143,7 +143,7 @@ export default function AlertsBudgets() {
       medium: 'border-l-amber-500',
       low: 'border-l-emerald-500'
     }
-    return map[severity] || 'border-l-azure-500'
+    return map[severity] || 'border-l-brand-500'
   }
 
   return (
@@ -154,18 +154,14 @@ export default function AlertsBudgets() {
       </div>
 
       {/* Enhancement #1: Polished tab bar */}
-      <div className="flex gap-1 p-1.5 bg-surface-100 dark:bg-surface-800/80 rounded-xl w-fit backdrop-blur-sm border border-surface-200/50 dark:border-surface-700/50">
+      <div className="tab-bar">
         {[
           { id: 'alerts', label: 'Alerts', icon: Bell },
           { id: 'budgets', label: 'Budgets', icon: Wallet }
         ].map(({ id, label, icon: Icon }) => (
           <button key={id} onClick={() => setTab(id)}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
-              tab === id
-                ? 'bg-white dark:bg-surface-700 text-surface-900 dark:text-white shadow-sm ring-1 ring-surface-200/60 dark:ring-surface-600/60'
-                : 'text-surface-500 hover:text-surface-700 dark:hover:text-surface-300 hover:bg-surface-200/40 dark:hover:bg-surface-700/40'
-            }`}>
-            <Icon className={`w-4 h-4 ${tab === id ? 'text-azure-600 dark:text-azure-400' : ''}`} /> {label}
+            className={`tab-item${tab === id ? ' active' : ''}`}>
+            <Icon className={`w-4 h-4 ${tab === id ? 'text-brand-600 dark:text-brand-400' : ''}`} /> {label}
           </button>
         ))}
       </div>
@@ -182,13 +178,13 @@ export default function AlertsBudgets() {
                   iconBg: 'bg-orange-100 dark:bg-orange-900/30', iconText: 'text-orange-600 dark:text-orange-400' },
                 { label: 'Medium', value: alertStats.medium, color: 'amber', icon: Info,
                   iconBg: 'bg-amber-100 dark:bg-amber-900/30', iconText: 'text-amber-600 dark:text-amber-400' },
-                { label: 'Unread', value: alertStats.unread, color: 'azure', icon: Bell,
-                  iconBg: 'bg-azure-100 dark:bg-azure-900/30', iconText: 'text-azure-600 dark:text-azure-400' }
+                { label: 'Unread', value: alertStats.unread, color: 'brand', icon: Bell,
+                  iconBg: 'bg-brand-100 dark:bg-brand-900/30', iconText: 'text-brand-600 dark:text-brand-400' }
               ].map((stat, i) => {
                 const StatIcon = stat.icon
                 return (
                   <div key={i}
-                    className="glass-card p-4 animate-slide-up"
+                    className="card-glass p-4 animate-enter"
                     style={{ animationDelay: `${i * 80}ms`, animationFillMode: 'backwards' }}>
                     <div className="flex items-start justify-between mb-2">
                       <p className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wide">{stat.label}</p>
@@ -202,7 +198,7 @@ export default function AlertsBudgets() {
                       stat.color === 'red' ? 'text-red-600 dark:text-red-400' :
                       stat.color === 'orange' ? 'text-orange-600 dark:text-orange-400' :
                       stat.color === 'amber' ? 'text-amber-600 dark:text-amber-400' :
-                      'text-azure-600 dark:text-azure-400'
+                      'text-brand-600 dark:text-brand-400'
                     }`}>{stat.value}</p>
                   </div>
                 )
@@ -213,7 +209,7 @@ export default function AlertsBudgets() {
           {/* Alert Filters */}
           <div className="flex flex-wrap items-center gap-3">
             <select value={alertFilter.type} onChange={(e) => setAlertFilter({ ...alertFilter, type: e.target.value })}
-              className="input-field w-auto text-sm">
+              className="input w-auto text-sm">
               <option value="">All Types</option>
               <option value="budget">Budget</option>
               <option value="anomaly">Anomaly</option>
@@ -221,7 +217,7 @@ export default function AlertsBudgets() {
               <option value="system">System</option>
             </select>
             <select value={alertFilter.severity} onChange={(e) => setAlertFilter({ ...alertFilter, severity: e.target.value })}
-              className="input-field w-auto text-sm">
+              className="input w-auto text-sm">
               <option value="">All Severity</option>
               <option value="critical">Critical</option>
               <option value="high">High</option>
@@ -237,15 +233,15 @@ export default function AlertsBudgets() {
           <div className="space-y-3">
             {loading ? (
               Array(5).fill(0).map((_, i) => (
-                <div key={i} className="glass-card p-5 animate-pulse"><div className="h-4 bg-surface-200 dark:bg-surface-700 rounded w-1/3 mb-3" /><div className="h-3 bg-surface-200 dark:bg-surface-700 rounded w-2/3" /></div>
+                <div key={i} className="card-glass p-5 animate-pulse"><div className="h-4 bg-surface-200 dark:bg-navy-700 rounded w-1/3 mb-3" /><div className="h-3 bg-surface-200 dark:bg-navy-700 rounded w-2/3" /></div>
               ))
             ) : alerts.map((alert, idx) => (
               /* Enhancement #5: border-l-4 colored by severity, with slide-up stagger */
               <div key={alert.id}
-                className={`glass-card p-5 transition-all duration-200 border-l-4 animate-slide-up ${
+                className={`card-glass p-5 transition-all duration-200 border-l-4 animate-enter ${
                   !alert.is_read
                     ? severityBorderColor(alert.severity)
-                    : 'border-l-surface-300 dark:border-l-surface-600'
+                    : 'border-l-surface-300 dark:border-l-navy-600'
                 } ${alert.is_resolved ? 'opacity-60' : ''}`}
                 style={{ animationDelay: `${idx * 50}ms`, animationFillMode: 'backwards' }}>
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
@@ -265,7 +261,7 @@ export default function AlertsBudgets() {
                   <div className="flex gap-2">
                     {!alert.is_read && (
                       <button onClick={() => handleMarkRead(alert.id)}
-                        className="p-2 rounded-lg bg-azure-50 dark:bg-azure-900/20 text-azure-600 dark:text-azure-400 hover:bg-azure-100 dark:hover:bg-azure-900/40 transition-colors"
+                        className="p-2 rounded-lg bg-brand-50 dark:bg-brand-900/20 text-brand-600 dark:text-brand-400 hover:bg-brand-100 dark:hover:bg-brand-900/40 transition-colors"
                         title="Mark as read"><Eye className="w-4 h-4" /></button>
                     )}
                     {!alert.is_resolved && (
@@ -284,27 +280,27 @@ export default function AlertsBudgets() {
       {tab === 'budgets' && (
         <>
           <div className="flex justify-end">
-            <button onClick={() => setShowNewBudget(!showNewBudget)} className="btn-primary flex items-center gap-2">
+            <button onClick={() => setShowNewBudget(!showNewBudget)} className="btn-brand flex items-center gap-2">
               <Plus className="w-4 h-4" /> New Budget
             </button>
           </div>
 
-          {/* Enhancement #10: glass-card-elevated for new budget form */}
+          {/* Enhancement #10: card-elevated card-glass for new budget form */}
           {showNewBudget && (
-            <div className="glass-card-elevated p-6 animate-slide-up border border-azure-200/40 dark:border-azure-700/30">
+            <div className="card-elevated card-glass p-6 animate-enter border border-brand-200/40 dark:border-brand-700/30">
               <div className="flex items-center gap-3 mb-5">
-                <div className="bg-azure-100 dark:bg-azure-900/30 rounded-xl p-2.5">
-                  <Wallet className="w-5 h-5 text-azure-600 dark:text-azure-400" />
+                <div className="bg-brand-100 dark:bg-brand-900/30 rounded-xl p-2.5">
+                  <Wallet className="w-5 h-5 text-brand-600 dark:text-brand-400" />
                 </div>
                 <h3 className="text-base font-semibold text-surface-900 dark:text-white">Create Budget</h3>
               </div>
               <form onSubmit={handleCreateBudget} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <input type="text" placeholder="Budget name" className="input-field" required
+                <input type="text" placeholder="Budget name" className="input" required
                   value={newBudget.name} onChange={(e) => setNewBudget({ ...newBudget, name: e.target.value })} />
-                <input type="number" placeholder="Amount ($)" className="input-field" required min="0" step="0.01"
+                <input type="number" placeholder="Amount ($)" className="input" required min="0" step="0.01"
                   value={newBudget.amount} onChange={(e) => setNewBudget({ ...newBudget, amount: e.target.value })} />
                 <div className="flex gap-2">
-                  <select className="input-field" value={newBudget.period}
+                  <select className="input" value={newBudget.period}
                     onChange={(e) => setNewBudget({ ...newBudget, period: e.target.value })}>
                     <option value="daily">Daily</option>
                     <option value="weekly">Weekly</option>
@@ -312,7 +308,7 @@ export default function AlertsBudgets() {
                     <option value="quarterly">Quarterly</option>
                     <option value="yearly">Yearly</option>
                   </select>
-                  <button type="submit" className="btn-primary whitespace-nowrap">Create</button>
+                  <button type="submit" className="btn-brand whitespace-nowrap">Create</button>
                 </div>
               </form>
             </div>
@@ -337,7 +333,7 @@ export default function AlertsBudgets() {
 
               return (
                 <div key={budget.id}
-                  className="glass-card-hover overflow-hidden animate-slide-up"
+                  className="card-glass card-hover overflow-hidden animate-enter"
                   style={{ animationDelay: `${idx * 70}ms`, animationFillMode: 'backwards' }}>
                   {/* Enhancement #6: Gradient header accent bar */}
                   <div className={`h-1 bg-gradient-to-r ${gradientAccent}`} />
@@ -359,7 +355,7 @@ export default function AlertsBudgets() {
 
                     {/* Enhancement #4: Progress bar with glow effect */}
                     <div className="mb-4">
-                      <div className="h-3 bg-surface-100 dark:bg-surface-800 rounded-full overflow-hidden">
+                      <div className="h-3 bg-surface-100 dark:bg-navy-800 rounded-full overflow-hidden">
                         <div
                           className={`h-full rounded-full transition-all duration-1000 ${
                             isOver ? 'bg-red-500' : isWarning ? 'bg-amber-500' : 'bg-emerald-500'
