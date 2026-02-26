@@ -1,0 +1,18 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environment": { "value": "prod" },
+    "location": { "value": "eastus" },
+    "projectName": { "value": "azurecostmon" },
+    "dbAdminUser": { "value": "pgadmin" },
+    "dbAdminPassword": { "value": "" },
+    "jwtSecret": { "value": "" },
+    "azureTenantId": { "value": "" },
+    "azureClientId": { "value": "" },
+    "azureClientSecret": { "value": "" },
+    "azureSubscriptionIds": { "value": "" },
+    "azureAdEnabled": { "value": false },
+    "azureUseMock": { "value": false }
+  }
+}
