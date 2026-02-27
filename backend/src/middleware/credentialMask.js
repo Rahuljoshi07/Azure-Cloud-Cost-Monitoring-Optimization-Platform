@@ -47,21 +47,26 @@ function maskString(str) {
   return result;
 }
 
+// Field names that should be fully redacted in API responses.
+// IMPORTANT: "token" is NOT here because the login endpoint must return JWT tokens.
+// Actual env secret values are still caught by maskString().
+const REDACT_FIELD_NAMES = ['secret', 'password', 'password_hash', 'credential', 'api_key', 'apikey', 'client_secret'];
+
 /**
  * Deep-mask an object (recursively replaces secret values in all string fields).
  */
 function maskObject(obj) {
   if (obj === null || obj === undefined) return obj;
   if (typeof obj === 'string') return maskString(obj);
+  if (obj instanceof Date) return obj;
+  if (Buffer.isBuffer(obj)) return obj;
   if (Array.isArray(obj)) return obj.map(maskObject);
   if (typeof obj === 'object') {
     const masked = {};
     for (const [key, value] of Object.entries(obj)) {
-      // Fully redact known sensitive field names
       const lowerKey = key.toLowerCase();
-      if (lowerKey.includes('secret') || lowerKey.includes('password') ||
-          lowerKey.includes('token') || lowerKey.includes('credential') ||
-          lowerKey.includes('api_key') || lowerKey.includes('apikey')) {
+      // Fully redact known credential field names
+      if (REDACT_FIELD_NAMES.some(f => lowerKey.includes(f))) {
         masked[key] = typeof value === 'string' && value.length > 0 ? '********' : value;
       } else {
         masked[key] = maskObject(value);
