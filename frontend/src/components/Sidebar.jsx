@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom'
-import { useSidebarStore } from '../store/useStore'
+import { useSidebarStore, useSyncStore } from '../store/useStore'
 import {
   LayoutDashboard, BarChart3, Server, Lightbulb,
   Bell, FileText, Settings, X, ChevronLeft, Hexagon
@@ -17,6 +17,7 @@ const navItems = [
 
 export default function Sidebar() {
   const { isCollapsed, isMobileOpen, toggleCollapse, closeMobile } = useSidebarStore()
+  const { lastSynced, isSyncing } = useSyncStore()
   const location = useLocation()
 
   return (
@@ -86,10 +87,14 @@ export default function Sidebar() {
         {!isCollapsed && (
           <div className="mx-3 mb-4 p-4 rounded-xl bg-white/[0.04] border border-white/[0.06]">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-2 h-2 rounded-full bg-emerald-400 shadow-neon-emerald" />
-              <span className="text-[11px] font-semibold text-emerald-400">System Online</span>
+              <div className={`w-2 h-2 rounded-full ${isSyncing ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400'} shadow-neon-emerald`} />
+              <span className={`text-[11px] font-semibold ${isSyncing ? 'text-amber-400' : 'text-emerald-400'}`}>
+                {isSyncing ? 'Syncing...' : 'System Online'}
+              </span>
             </div>
-            <p className="text-[10px] text-surface-500 leading-relaxed">All services operational</p>
+            <p className="text-[10px] text-surface-500 leading-relaxed">
+              {lastSynced ? `Last synced ${new Date(lastSynced).toLocaleTimeString()}` : 'All services operational'}
+            </p>
           </div>
         )}
 

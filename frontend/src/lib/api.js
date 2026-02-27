@@ -84,4 +84,15 @@ export const reportAPI = {
   getAnomalies: (params) => api.get('/reports/anomalies', { params }),
 };
 
+// Dashboard (single endpoint for all data)
+export const dashboardAPI = {
+  getSummary: (params) => api.get('/dashboard/summary', { params }),
+};
+
+// Sync
+export const syncAPI = {
+  trigger: () => api.post('/sync'),
+  getStatus: () => api.get('/sync/status'),
+};
+
 export default api;

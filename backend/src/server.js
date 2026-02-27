@@ -80,13 +80,17 @@ app.use('/api/alerts', require('./routes/alertRoutes'));
 app.use('/api/recommendations', require('./routes/recommendationRoutes'));
 app.use('/api/budgets', require('./routes/budgetRoutes'));
 app.use('/api/reports', require('./routes/reportRoutes'));
+app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 
 // ─── Admin: Trigger manual sync ──────────────────────────────────────────────
 
-app.post('/api/sync', authenticate, authorize('admin'), async (req, res) => {
+let lastSyncTimestamp = null;
+
+app.post('/api/sync', authenticate, async (req, res) => {
   try {
     const report = await runFullSync();
-    res.json({ message: 'Sync completed', report });
+    lastSyncTimestamp = new Date().toISOString();
+    res.json({ message: 'Sync completed', report, synced_at: lastSyncTimestamp });
   } catch (error) {
     console.error('Manual sync error:', error);
     res.status(500).json({ error: 'Sync failed', details: error.message });
@@ -98,6 +102,7 @@ app.get('/api/sync/status', authenticate, async (req, res) => {
     azure_live: isAzureLive(),
     azure_ad_enabled: process.env.AZURE_AD_ENABLED === 'true',
     sync_schedule: process.env.SYNC_CRON || '0 */6 * * *',
+    last_synced: lastSyncTimestamp,
   });
 });
 

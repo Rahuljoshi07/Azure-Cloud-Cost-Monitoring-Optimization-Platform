@@ -54,3 +54,13 @@ export const useSidebarStore = create((set) => ({
   toggleMobile: () => set((state) => ({ isMobileOpen: !state.isMobileOpen })),
   closeMobile: () => set({ isMobileOpen: false }),
 }));
+
+export const useSyncStore = create((set) => ({
+  lastSynced: null,
+  isSyncing: false,
+  syncError: null,
+
+  setSyncing: (syncing) => set({ isSyncing: syncing }),
+  setSynced: (timestamp) => set({ lastSynced: timestamp, isSyncing: false, syncError: null }),
+  setSyncError: (error) => set({ syncError: error, isSyncing: false }),
+}));

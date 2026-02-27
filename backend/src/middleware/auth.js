@@ -56,40 +56,54 @@ const authenticate = async (req, res, next) => {
     const useAzureAd = process.env.AZURE_AD_ENABLED === 'true';
 
     if (useAzureAd) {
-      // ── Azure AD path ──────────────────────────────────────────────────
-      const decoded = await verifyAzureAdToken(token);
-
-      const email = decoded.preferred_username || decoded.email || decoded.upn || '';
-      const name = decoded.name || email.split('@')[0];
-
-      // Auto-provision user on first Azure AD login
-      let result = await query('SELECT id, email, full_name, role, is_active FROM users WHERE email = $1', [email]);
-
-      if (result.rows.length === 0) {
-        // Determine role from Azure AD roles claim
-        let role = 'viewer';
-        const adRoles = decoded.roles || [];
-        if (adRoles.includes('Admin') || adRoles.includes('admin')) role = 'admin';
-        else if (adRoles.includes('Editor') || adRoles.includes('editor')) role = 'editor';
-
-        result = await query(
-          `INSERT INTO users (email, password_hash, full_name, role)
-           VALUES ($1, 'azure-ad-managed', $2, $3)
-           RETURNING id, email, full_name, role, is_active`,
-          [email, name, role]
-        );
+      // ── Dual-auth: try Azure AD first, fall back to local JWT ────────
+      let azureDecoded = null;
+      try {
+        azureDecoded = await verifyAzureAdToken(token);
+      } catch {
+        // Not a valid Azure AD token — try local JWT below
       }
 
-      if (!result.rows[0].is_active) {
-        return res.status(403).json({ error: 'Account is deactivated.' });
-      }
+      if (azureDecoded) {
+        // Azure AD token verified
+        const email = azureDecoded.preferred_username || azureDecoded.email || azureDecoded.upn || '';
+        const name = azureDecoded.name || email.split('@')[0];
 
-      await query('UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = $1', [result.rows[0].id]);
-      req.user = result.rows[0];
-      req.azureAdToken = decoded;
+        let result = await query('SELECT id, email, full_name, role, is_active FROM users WHERE email = $1', [email]);
+
+        if (result.rows.length === 0) {
+          let role = 'viewer';
+          const adRoles = azureDecoded.roles || [];
+          if (adRoles.includes('Admin') || adRoles.includes('admin')) role = 'admin';
+          else if (adRoles.includes('Editor') || adRoles.includes('editor')) role = 'editor';
+
+          result = await query(
+            `INSERT INTO users (email, password_hash, full_name, role)
+             VALUES ($1, 'azure-ad-managed', $2, $3)
+             RETURNING id, email, full_name, role, is_active`,
+            [email, name, role]
+          );
+        }
+
+        if (!result.rows[0].is_active) {
+          return res.status(403).json({ error: 'Account is deactivated.' });
+        }
+
+        await query('UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = $1', [result.rows[0].id]);
+        req.user = result.rows[0];
+        req.azureAdToken = azureDecoded;
+      } else {
+        // Fall back to local JWT (keeps demo/local login working)
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const result = await query('SELECT id, email, full_name, role, is_active FROM users WHERE id = $1', [decoded.id]);
+        if (result.rows.length === 0 || !result.rows[0].is_active) {
+          return res.status(401).json({ error: 'Invalid or inactive user.' });
+        }
+        req.user = result.rows[0];
+      }
 
     } else {
-      // ── Local JWT path ─────────────────────────────────────────────────
+      // ── Local JWT path (Azure AD disabled) ───────────────────────────
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
       const result = await query('SELECT id, email, full_name, role, is_active FROM users WHERE id = $1', [decoded.id]);
