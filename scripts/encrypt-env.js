@@ -19,7 +19,7 @@ const ENC_PATH = path.join(__dirname, '..', 'backend', '.env.enc');
 
 // Derive a 256-bit key from machine identity (hostname + username + hardcoded salt)
 function deriveKey() {
-  const machineId = `${os.hostname()}::${os.userInfo().username}::cloudflow-vault-2024`;
+  const machineId = `${os.hostname()}::${os.userInfo().username}::azure-cloud-cost-monitoring-optimization-vault-2024`;
   return crypto.createHash('sha256').update(machineId).digest();
 }
 

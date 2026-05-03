@@ -44,9 +44,14 @@ export default function Sidebar() {
               <div className="w-9 h-9 rounded-xl gradient-brand flex items-center justify-center shadow-neon-brand flex-shrink-0">
                 <Hexagon className="w-5 h-5 text-white" />
               </div>
-              <div>
-                <h1 className="text-sm font-extrabold text-white tracking-tight">CloudFlow</h1>
-                <p className="text-[10px] font-medium text-brand-300/60 uppercase tracking-[0.15em]">cost intel</p>
+              <div className="min-w-0">
+                <h1
+                  className="max-w-[150px] text-[10px] font-extrabold leading-[1.05] tracking-tight text-white"
+                  style={{ display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden' }}
+                >
+                  Azure Cloud Cost Monitoring & Optimization
+                </h1>
+                <p className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.15em] text-brand-300/60">cost intel</p>
               </div>
             </div>
           )}

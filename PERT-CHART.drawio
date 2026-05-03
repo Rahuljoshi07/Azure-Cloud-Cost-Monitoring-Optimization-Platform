@@ -1,0 +1,261 @@
+<mxfile host="app.diagrams.net" modified="2026-02-27T18:00:00.000Z" agent="draw.io" type="device">
+  <diagram id="pert-azure" name="PERT Chart - Azure Cloud Cost">
+    <mxGraphModel dx="2074" dy="1166" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="3000" pageHeight="1600" math="0" shadow="1">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- ====== TITLE ====== -->
+        <mxCell id="title" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;&lt;b&gt;PERT Chart — Azure Cloud Cost Monitoring &amp; Optimization Platform&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#1e293b;fontFamily=Inter;" vertex="1" parent="1">
+          <mxGeometry x="400" y="20" width="1200" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- ====== LEGEND ====== -->
+        <mxCell id="leg1" value="🔴 Critical Path" style="text;html=1;fillColor=none;strokeColor=none;fontColor=#ef4444;fontSize=14;fontStyle=1;fontFamily=Inter;" vertex="1" parent="1">
+          <mxGeometry x="400" y="90" width="140" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg2" value="🔵 Data / Auth" style="text;html=1;fillColor=none;strokeColor=none;fontColor=#0284c7;fontSize=14;fontStyle=1;fontFamily=Inter;" vertex="1" parent="1">
+          <mxGeometry x="560" y="90" width="130" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg3" value="🟡 Infrastructure" style="text;html=1;fillColor=none;strokeColor=none;fontColor=#d97706;fontSize=14;fontStyle=1;fontFamily=Inter;" vertex="1" parent="1">
+          <mxGeometry x="710" y="90" width="140" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg4" value="🟣 Frontend" style="text;html=1;fillColor=none;strokeColor=none;fontColor=#9333ea;fontSize=14;fontStyle=1;fontFamily=Inter;" vertex="1" parent="1">
+          <mxGeometry x="870" y="90" width="120" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg5" value="🟠 Analytics" style="text;html=1;fillColor=none;strokeColor=none;fontColor=#ea580c;fontSize=14;fontStyle=1;fontFamily=Inter;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="90" width="120" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- ====== START NODE ====== -->
+        <mxCell id="start" value="&lt;font style=&quot;font-size: 22px;&quot;&gt;&lt;b&gt;🚀&lt;br&gt;START&lt;/b&gt;&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#10b981;strokeColor=#047857;strokeWidth=4;fontColor=#ffffff;shadow=1;fontFamily=Inter;" vertex="1" parent="1">
+          <mxGeometry x="60" y="400" width="140" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- ====== COLUMN 2: ARCHITECTURE ====== -->
+        <mxCell id="arch" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;📐 Architecture&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px; color: #991b1b;&quot;&gt;1 Week&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#fff1f2;strokeColor=#ef4444;strokeWidth=4;shadow=1;fontFamily=Inter;fontColor=#881337;" vertex="1" parent="1">
+          <mxGeometry x="300" y="420" width="260" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- ====== COLUMN 3: BRANCHES ====== -->
+        <!-- Backend Core (Critical) -->
+        <mxCell id="backend" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;⚙️ Backend Core&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px; color: #991b1b;&quot;&gt;1 Week&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#fff1f2;strokeColor=#ef4444;strokeWidth=4;shadow=1;fontFamily=Inter;fontColor=#881337;" vertex="1" parent="1">
+          <mxGeometry x="620" y="150" width="260" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Database -->
+        <mxCell id="db" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;💽 Database&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px; color: #075985;&quot;&gt;1 Week&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#e0f2fe;strokeColor=#0284c7;strokeWidth=4;shadow=1;fontFamily=Inter;fontColor=#0c4a6e;" vertex="1" parent="1">
+          <mxGeometry x="620" y="310" width="260" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Azure Infra -->
+        <mxCell id="infra" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;☁️ Azure Infra&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px; color: #92400e;&quot;&gt;1 Week&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#fef3c7;strokeColor=#d97706;strokeWidth=4;shadow=1;fontFamily=Inter;fontColor=#78350f;" vertex="1" parent="1">
+          <mxGeometry x="620" y="470" width="260" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Frontend Core -->
+        <mxCell id="fe" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;🎨 Frontend Core&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px; color: #581c87;&quot;&gt;0.5 Week&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#f3e8ff;strokeColor=#9333ea;strokeWidth=4;shadow=1;fontFamily=Inter;fontColor=#581c87;" vertex="1" parent="1">
+          <mxGeometry x="620" y="630" width="260" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- ====== COLUMN 4 ====== -->
+        <!-- Azure API (Critical) -->
+        <mxCell id="api" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;⚡ Azure API&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px; color: #991b1b;&quot;&gt;2 Weeks&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#fff1f2;strokeColor=#ef4444;strokeWidth=4;shadow=1;fontFamily=Inter;fontColor=#881337;" vertex="1" parent="1">
+          <mxGeometry x="940" y="150" width="260" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Auth Module -->
+        <mxCell id="auth" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;🔐 Auth Module&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px; color: #075985;&quot;&gt;1 Week&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#e0f2fe;strokeColor=#0284c7;strokeWidth=4;shadow=1;fontFamily=Inter;fontColor=#0c4a6e;" vertex="1" parent="1">
+          <mxGeometry x="940" y="310" width="260" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- CICD -->
+        <mxCell id="cicd" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;♾️ CI/CD Pipeline&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px; color: #92400e;&quot;&gt;1 Week&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#fef3c7;strokeColor=#d97706;strokeWidth=4;shadow=1;fontFamily=Inter;fontColor=#78350f;" vertex="1" parent="1">
+          <mxGeometry x="940" y="470" width="260" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Dashboard UI -->
+        <mxCell id="dash" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;📊 Dashboard UI&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px; color: #581c87;&quot;&gt;2 Weeks&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#f3e8ff;strokeColor=#9333ea;strokeWidth=4;shadow=1;fontFamily=Inter;fontColor=#581c87;" vertex="1" parent="1">
+          <mxGeometry x="940" y="630" width="260" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- ====== COLUMN 5 ====== -->
+        <!-- Data Sync (Critical) -->
+        <mxCell id="sync" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;🔄 Data Sync&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px; color: #991b1b;&quot;&gt;1.5 Weeks&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#fff1f2;strokeColor=#ef4444;strokeWidth=4;shadow=1;fontFamily=Inter;fontColor=#881337;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="230" width="260" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Resource Mgmt -->
+        <mxCell id="rm" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;🛠️ Resource Mgmt&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px; color: #581c87;&quot;&gt;1.5 Weeks&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#f3e8ff;strokeColor=#9333ea;strokeWidth=4;shadow=1;fontFamily=Inter;fontColor=#581c87;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="630" width="260" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- ====== COLUMN 6: FEATURES ====== -->
+        <!-- Anomaly Detect (Critical) -->
+        <mxCell id="anom" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;🔍 Anomaly Detect&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px; color: #991b1b;&quot;&gt;1 Week&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#fff1f2;strokeColor=#ef4444;strokeWidth=4;shadow=1;fontFamily=Inter;fontColor=#881337;" vertex="1" parent="1">
+          <mxGeometry x="1580" y="150" width="260" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Budget Alerts -->
+        <mxCell id="budg" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;💰 Budget Alerts&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px; color: #9a3412;&quot;&gt;1 Week&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#ffedd5;strokeColor=#ea580c;strokeWidth=4;shadow=1;fontFamily=Inter;fontColor=#7c2d12;" vertex="1" parent="1">
+          <mxGeometry x="1580" y="310" width="260" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Rec Engine -->
+        <mxCell id="rec" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;💡 Rec Engine&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px; color: #9a3412;&quot;&gt;1 Week&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#ffedd5;strokeColor=#ea580c;strokeWidth=4;shadow=1;fontFamily=Inter;fontColor=#7c2d12;" vertex="1" parent="1">
+          <mxGeometry x="1580" y="470" width="260" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- ====== COLUMN 7: FINALIZATION ====== -->
+        <!-- UI Integration (Critical) -->
+        <mxCell id="ui" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;🧩 UI Integration&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px; color: #991b1b;&quot;&gt;1.5 Weeks&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#fff1f2;strokeColor=#ef4444;strokeWidth=4;shadow=1;fontFamily=Inter;fontColor=#881337;" vertex="1" parent="1">
+          <mxGeometry x="1900" y="350" width="260" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- ====== COLUMN 8: QA ====== -->
+        <mxCell id="qa" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;🧪 System QA&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px; color: #991b1b;&quot;&gt;1.5 Weeks&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#fff1f2;strokeColor=#ef4444;strokeWidth=4;shadow=1;fontFamily=Inter;fontColor=#881337;" vertex="1" parent="1">
+          <mxGeometry x="1900" y="530" width="260" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- ====== FINISH NODE ====== -->
+        <mxCell id="finish" value="&lt;font style=&quot;font-size: 22px;&quot;&gt;&lt;b&gt;🎉&lt;br&gt;DEPLOY&lt;/b&gt;&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#10b981;strokeColor=#047857;strokeWidth=4;fontColor=#ffffff;shadow=1;fontFamily=Inter;" vertex="1" parent="1">
+          <mxGeometry x="2200" y="400" width="140" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- ====== CONNECTIONS — CRITICAL PATH (RED, THICK) ====== -->
+        <!-- ============================================================ -->
+
+        <!-- Start -> Architecture -->
+        <mxCell id="e1" style="exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#ef4444;strokeWidth=5;rounded=1;shadow=0;endArrow=blockThin;endFill=1;endSize=12;" edge="1" source="start" target="arch" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Architecture -> Backend Core -->
+        <mxCell id="e2" style="exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#ef4444;strokeWidth=5;rounded=1;endArrow=blockThin;endFill=1;endSize=12;" edge="1" source="arch" target="backend" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Backend Core -> Azure API -->
+        <mxCell id="e3" style="exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#ef4444;strokeWidth=5;rounded=1;endArrow=blockThin;endFill=1;endSize=12;" edge="1" source="backend" target="api" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Azure API -> Data Sync -->
+        <mxCell id="e4" style="exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#ef4444;strokeWidth=5;rounded=1;endArrow=blockThin;endFill=1;endSize=12;" edge="1" source="api" target="sync" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Data Sync -> Anomaly Detect -->
+        <mxCell id="e5" style="exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#ef4444;strokeWidth=5;rounded=1;endArrow=blockThin;endFill=1;endSize=12;" edge="1" source="sync" target="anom" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Anomaly Detect -> UI Integration -->
+        <mxCell id="e6" style="exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#ef4444;strokeWidth=5;rounded=1;endArrow=blockThin;endFill=1;endSize=12;" edge="1" source="anom" target="ui" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- UI Integration -> System QA -->
+        <mxCell id="e7" style="exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#ef4444;strokeWidth=5;rounded=1;endArrow=blockThin;endFill=1;endSize=12;" edge="1" source="ui" target="qa" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- System QA -> Deploy -->
+        <mxCell id="e8" style="exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#ef4444;strokeWidth=5;rounded=1;endArrow=blockThin;endFill=1;endSize=12;" edge="1" source="qa" target="finish" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- ====== CONNECTIONS — NON-CRITICAL (GRAY, THIN, DASHED) ====== -->
+        <!-- ============================================================ -->
+
+        <!-- Arch -> DB -->
+        <mxCell id="e10" style="exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#94a3b8;strokeWidth=2;dashed=1;rounded=1;endArrow=blockThin;endFill=1;endSize=8;" edge="1" source="arch" target="db" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Arch -> Infra -->
+        <mxCell id="e11" style="exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#94a3b8;strokeWidth=2;dashed=1;rounded=1;endArrow=blockThin;endFill=1;endSize=8;" edge="1" source="arch" target="infra" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Arch -> FE -->
+        <mxCell id="e12" style="exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#94a3b8;strokeWidth=2;dashed=1;rounded=1;endArrow=blockThin;endFill=1;endSize=8;" edge="1" source="arch" target="fe" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Backend -> Auth -->
+        <mxCell id="e13" style="exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#94a3b8;strokeWidth=2;dashed=1;rounded=1;endArrow=blockThin;endFill=1;endSize=8;" edge="1" source="backend" target="auth" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- DB -> Auth -->
+        <mxCell id="e14" style="exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#94a3b8;strokeWidth=2;dashed=1;rounded=1;endArrow=blockThin;endFill=1;endSize=8;" edge="1" source="db" target="auth" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Infra -> CICD -->
+        <mxCell id="e15" style="exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#94a3b8;strokeWidth=2;dashed=1;rounded=1;endArrow=blockThin;endFill=1;endSize=8;" edge="1" source="infra" target="cicd" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Infra -> Sync -->
+        <mxCell id="e16" style="exitX=1;exitY=0.5;entryX=0;entryY=1;strokeColor=#94a3b8;strokeWidth=2;dashed=1;rounded=1;endArrow=blockThin;endFill=1;endSize=8;" edge="1" source="infra" target="sync" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- FE -> Dashboard -->
+        <mxCell id="e17" style="exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#94a3b8;strokeWidth=2;dashed=1;rounded=1;endArrow=blockThin;endFill=1;endSize=8;" edge="1" source="fe" target="dash" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Dashboard -> RM -->
+        <mxCell id="e18" style="exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#94a3b8;strokeWidth=2;dashed=1;rounded=1;endArrow=blockThin;endFill=1;endSize=8;" edge="1" source="dash" target="rm" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Auth -> Sync -->
+        <mxCell id="e19" style="exitX=1;exitY=0.5;entryX=0;entryY=1;strokeColor=#94a3b8;strokeWidth=2;dashed=1;rounded=1;endArrow=blockThin;endFill=1;endSize=8;" edge="1" source="auth" target="sync" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Sync -> Budget -->
+        <mxCell id="e20" style="exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#94a3b8;strokeWidth=2;dashed=1;rounded=1;endArrow=blockThin;endFill=1;endSize=8;" edge="1" source="sync" target="budg" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Sync -> Rec -->
+        <mxCell id="e21" style="exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#94a3b8;strokeWidth=2;dashed=1;rounded=1;endArrow=blockThin;endFill=1;endSize=8;" edge="1" source="sync" target="rec" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Budget -> UI -->
+        <mxCell id="e22" style="exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#94a3b8;strokeWidth=2;dashed=1;rounded=1;endArrow=blockThin;endFill=1;endSize=8;" edge="1" source="budg" target="ui" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Rec -> UI -->
+        <mxCell id="e23" style="exitX=1;exitY=0.5;entryX=0;entryY=1;strokeColor=#94a3b8;strokeWidth=2;dashed=1;rounded=1;endArrow=blockThin;endFill=1;endSize=8;" edge="1" source="rec" target="ui" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- RM -> UI -->
+        <mxCell id="e24" style="exitX=1;exitY=0.5;entryX=0;entryY=1;strokeColor=#94a3b8;strokeWidth=2;dashed=1;rounded=1;endArrow=blockThin;endFill=1;endSize=8;" edge="1" source="rm" target="ui" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- CICD -> QA -->
+        <mxCell id="e25" style="exitX=1;exitY=0.5;entryX=0;entryY=1;strokeColor=#94a3b8;strokeWidth=2;dashed=1;rounded=1;endArrow=blockThin;endFill=1;endSize=8;" edge="1" source="cicd" target="qa" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- ====== CRITICAL PATH LABEL ====== -->
+        <mxCell id="cp_label" value="&lt;font style=&quot;font-size: 16px; color: #ef4444;&quot;&gt;&lt;b&gt;🚩 Critical Path:&lt;/b&gt; Architecture → Backend Core → Azure API → Data Sync → Anomaly Detect → UI Integration → System QA → Deploy&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;fillColor=none;strokeColor=none;fontFamily=Inter;" vertex="1" parent="1">
+          <mxGeometry x="60" y="830" width="1200" height="40" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

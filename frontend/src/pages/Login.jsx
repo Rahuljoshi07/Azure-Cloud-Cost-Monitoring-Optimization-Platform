@@ -96,7 +96,7 @@ export default function Login() {
               <Hexagon className="w-6 h-6 text-brand-300" />
             </div>
             <div>
-              <h1 className="text-lg font-extrabold text-white tracking-tight">CloudFlow</h1>
+              <h1 className="text-lg font-extrabold text-white tracking-tight">Azure Cloud Cost Monitoring & Optimization</h1>
               <p className="text-[10px] font-semibold text-brand-300/50 uppercase tracking-[0.2em]">Cost Intelligence</p>
             </div>
           </div>
@@ -161,7 +161,7 @@ export default function Login() {
             <div className="w-10 h-10 rounded-xl gradient-brand flex items-center justify-center shadow-neon-brand">
               <Hexagon className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-extrabold text-surface-900 dark:text-white">CloudFlow</span>
+            <span className="text-xl font-extrabold text-surface-900 dark:text-white">Azure Cloud Cost Monitoring & Optimization</span>
           </div>
 
           <div className="card p-8 shadow-elevated">

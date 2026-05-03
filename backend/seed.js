@@ -7,23 +7,27 @@ const path = require('path');
 const AZURE_REGIONS = ['eastus', 'westus2', 'westeurope', 'southeastasia', 'centralindia', 'japaneast', 'australiaeast', 'uksouth'];
 const ENVIRONMENTS = ['production', 'staging', 'development', 'testing'];
 const DEPARTMENTS = ['engineering', 'data-science', 'marketing', 'finance', 'operations'];
+// Adjust these to control visible demo totals (per-resource per-day scale)
+// Target: small totals so dashboard shows ~$1-5 overall depending on number of resources
+const COST_SCALE = 0.005;
+const VALUE_SCALE = 0.05;
 
 const SERVICE_COSTS = {
-  'Virtual Machines': { min: 5, max: 85 },
-  'Azure SQL Database': { min: 3, max: 45 },
-  'Storage Accounts': { min: 0.5, max: 15 },
-  'App Service': { min: 2, max: 35 },
-  'Azure Kubernetes Service': { min: 10, max: 120 },
-  'Cosmos DB': { min: 5, max: 60 },
-  'Azure Functions': { min: 0.1, max: 8 },
-  'Load Balancer': { min: 1, max: 12 },
-  'Virtual Network': { min: 0.5, max: 5 },
-  'Azure Monitor': { min: 1, max: 10 },
-  'Key Vault': { min: 0.1, max: 2 },
-  'Redis Cache': { min: 3, max: 30 },
-  'Container Registry': { min: 1, max: 8 },
-  'CDN': { min: 0.5, max: 15 },
-  'API Management': { min: 5, max: 40 }
+  'Virtual Machines': { min: 0.75, max: 3.75 },
+  'Azure SQL Database': { min: 0.5, max: 3.5 },
+  'Storage Accounts': { min: 0.15, max: 2.25 },
+  'App Service': { min: 0.75, max: 3.25 },
+  'Azure Kubernetes Service': { min: 1.25, max: 4.0 },
+  'Cosmos DB': { min: 0.85, max: 3.75 },
+  'Azure Functions': { min: 0.05, max: 1.5 },
+  'Load Balancer': { min: 0.2, max: 1.25 },
+  'Virtual Network': { min: 0.1, max: 0.75 },
+  'Azure Monitor': { min: 0.2, max: 1.5 },
+  'Key Vault': { min: 0.05, max: 0.5 },
+  'Redis Cache': { min: 0.75, max: 2.75 },
+  'Container Registry': { min: 0.2, max: 1.25 },
+  'CDN': { min: 0.15, max: 1.75 },
+  'API Management': { min: 1.0, max: 4.0 }
 };
 
 const RESOURCE_TYPES = {
@@ -224,7 +228,7 @@ async function seed() {
         // Add some random spikes for anomaly detection
         if (Math.random() < 0.02) baseCost *= randomBetween(2.5, 5);
 
-        const cost = Math.round(baseCost * 10000) / 10000;
+        const cost = Math.round(baseCost * COST_SCALE * 10000) / 10000;
 
         values.push(resource.id, resource.subId, dateStr, cost, resource.service,
                      resource.service, resource.region, JSON.stringify(resource.tags));
@@ -281,7 +285,7 @@ async function seed() {
           recommendations.push({
             resource_id: resource.id, type: 'right-size', category: 'cost', impact: avgCpu < 15 ? 'high' : 'medium',
             title: `Resize underutilized VM`, description: `Average CPU usage is ${Math.round(avgCpu)}%. Consider downsizing to save costs.`,
-            estimated_savings: randomBetween(50, 300), current_value: 'Standard_D4s_v3', recommended_value: 'Standard_B2s', action: 'resize'
+            estimated_savings: Math.round(randomBetween(2, 4) * VALUE_SCALE * 10000) / 10000, current_value: 'Standard_D4s_v3', recommended_value: 'Standard_B2s', action: 'resize'
           });
         }
       }
@@ -289,21 +293,21 @@ async function seed() {
         recommendations.push({
           resource_id: resource.id, type: 'idle-resource', category: 'cost', impact: 'high',
           title: `Stop idle Virtual Machine`, description: `This VM has been running with minimal activity. Consider stopping it during off-hours.`,
-          estimated_savings: randomBetween(100, 500), current_value: 'Running 24/7', recommended_value: 'Run 12h/day', action: 'stop'
+          estimated_savings: Math.round(randomBetween(2, 4) * VALUE_SCALE * 10000) / 10000, current_value: 'Running 24/7', recommended_value: 'Run 12h/day', action: 'stop'
         });
       }
       if (resource.service === 'Storage Accounts' && Math.random() < 0.3) {
         recommendations.push({
           resource_id: resource.id, type: 'unattached-disk', category: 'cost', impact: 'medium',
           title: `Delete unattached storage`, description: `This storage account has unattached disks consuming costs.`,
-          estimated_savings: randomBetween(20, 100), current_value: 'Premium SSD', recommended_value: 'Delete or move to Cool tier', action: 'delete'
+          estimated_savings: Math.round(randomBetween(1, 3) * VALUE_SCALE * 10000) / 10000, current_value: 'Premium SSD', recommended_value: 'Delete or move to Cool tier', action: 'delete'
         });
       }
       if (resource.service === 'Azure SQL Database' && Math.random() < 0.2) {
         recommendations.push({
           resource_id: resource.id, type: 'over-provisioned', category: 'cost', impact: 'high',
           title: `Right-size SQL Database`, description: `Database DTU utilization is consistently low. Consider moving to a lower tier.`,
-          estimated_savings: randomBetween(80, 400), current_value: 'S3 (100 DTUs)', recommended_value: 'S1 (20 DTUs)', action: 'resize'
+          estimated_savings: Math.round(randomBetween(2, 4) * VALUE_SCALE * 10000) / 10000, current_value: 'S3 (100 DTUs)', recommended_value: 'S1 (20 DTUs)', action: 'resize'
         });
       }
     }
@@ -320,13 +324,13 @@ async function seed() {
 
     // Generate alerts
     const alertTemplates = [
-      { type: 'budget', severity: 'critical', title: 'Production budget exceeded 90%', message: 'The Production Subscription has used 92% of its monthly budget ($15,000).' },
-      { type: 'budget', severity: 'high', title: 'Development budget at 75%', message: 'Development Subscription spending has reached 75% of the budgeted amount.' },
-      { type: 'anomaly', severity: 'critical', title: 'Cost spike detected on AKS cluster', message: 'Azure Kubernetes Service costs increased by 340% compared to the 7-day average.' },
-      { type: 'anomaly', severity: 'high', title: 'Unusual storage costs in East US', message: 'Storage Account costs in East US region spiked 180% above normal levels.' },
-      { type: 'recommendation', severity: 'medium', title: 'New optimization found', message: '5 new cost optimization recommendations identified with potential savings of $1,200/month.' },
-      { type: 'anomaly', severity: 'medium', title: 'SQL Database cost increase', message: 'Azure SQL Database spending increased 45% over the past week.' },
-      { type: 'budget', severity: 'high', title: 'Staging budget threshold reached', message: 'Staging Subscription has reached 80% of its $5,000 monthly budget.' },
+      { type: 'budget', severity: 'critical', title: 'Production budget exceeded 90%', message: 'The Production Subscription is close to its monthly budget limit.' },
+      { type: 'budget', severity: 'high', title: 'Development budget at 75%', message: 'Development Subscription spending has reached the warning threshold.' },
+      { type: 'anomaly', severity: 'critical', title: 'Cost spike detected on AKS cluster', message: 'Azure Kubernetes Service costs increased sharply compared to the 7-day average.' },
+      { type: 'anomaly', severity: 'high', title: 'Unusual storage costs in East US', message: 'Storage Account costs in East US region moved above the normal pattern.' },
+      { type: 'recommendation', severity: 'medium', title: 'New optimization found', message: 'Several cost optimization recommendations are available with small savings potential.' },
+      { type: 'anomaly', severity: 'medium', title: 'SQL Database cost increase', message: 'Azure SQL Database spending increased over the past week.' },
+      { type: 'budget', severity: 'high', title: 'Staging budget threshold reached', message: 'Staging Subscription has reached the configured budget threshold.' },
       { type: 'system', severity: 'low', title: 'Cost data sync completed', message: 'Successfully synced cost data from Azure Cost Management API for all subscriptions.' },
       { type: 'anomaly', severity: 'high', title: 'VM costs doubled overnight', message: 'Virtual Machine costs in West Europe increased by 200% in the last 24 hours.' },
       { type: 'recommendation', severity: 'low', title: 'Reserved Instance opportunity', message: 'Consider purchasing Reserved Instances for 8 VMs to save up to 40% on compute costs.' },
@@ -351,11 +355,11 @@ async function seed() {
 
     // Generate budgets
     const budgets = [
-      { name: 'Production Monthly Budget', amount: 15000, period: 'monthly', subIndex: 0, spend: 13800 },
-      { name: 'Development Monthly Budget', amount: 3000, period: 'monthly', subIndex: 1, spend: 2250 },
-      { name: 'Staging Monthly Budget', amount: 5000, period: 'monthly', subIndex: 2, spend: 4000 },
-      { name: 'Compute Quarterly Budget', amount: 40000, period: 'quarterly', subIndex: 0, spend: 28500 },
-      { name: 'Storage Monthly Limit', amount: 2000, period: 'monthly', subIndex: 0, spend: 1650 }
+      { name: 'Production Monthly Budget', amount: 1.2, period: 'monthly', subIndex: 0, spend: 0.92 },
+      { name: 'Development Monthly Budget', amount: 0.45, period: 'monthly', subIndex: 1, spend: 0.28 },
+      { name: 'Staging Monthly Budget', amount: 0.6, period: 'monthly', subIndex: 2, spend: 0.41 },
+      { name: 'Compute Quarterly Budget', amount: 2.4, period: 'quarterly', subIndex: 0, spend: 1.55 },
+      { name: 'Storage Monthly Limit', amount: 0.25, period: 'monthly', subIndex: 0, spend: 0.18 }
     ];
 
     for (const budget of budgets) {
@@ -375,8 +379,8 @@ async function seed() {
         const date = new Date(today);
         date.setDate(date.getDate() - dayOffset);
         const resource = randomElement(resourceServiceMap);
-        const expected = randomBetween(30, 150);
-        const deviation = randomBetween(50, 300);
+        const expected = randomBetween(1, 4) * VALUE_SCALE;
+        const deviation = randomBetween(10, 45);
         const actual = expected * (1 + deviation / 100);
         const zScore = randomBetween(2.0, 5.5);
 
@@ -384,7 +388,7 @@ async function seed() {
           `INSERT INTO cost_anomalies (resource_id, subscription_id, date, expected_cost, actual_cost, deviation_percentage, z_score, severity, is_resolved)
            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
           [resource.id, resource.subId, date.toISOString().split('T')[0],
-           Math.round(expected * 100) / 100, Math.round(actual * 100) / 100,
+           Math.round(expected * 10000) / 10000, Math.round(actual * 10000) / 10000,
            Math.round(deviation * 100) / 100, Math.round(zScore * 100) / 100,
            zScore > 4 ? 'critical' : zScore > 3 ? 'high' : 'medium',
            dayOffset > 15]

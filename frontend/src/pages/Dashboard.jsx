@@ -15,9 +15,12 @@ import {
 const COLORS = ['#6366f1', '#06b6d4', '#a855f7', '#f43f5e', '#10b981', '#f59e0b', '#ec4899', '#14b8a6', '#8b5cf6', '#ef4444', '#22c55e', '#eab308']
 
 function formatCurrency(value) {
-  if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`
-  if (value >= 1000) return `$${(value / 1000).toFixed(1)}K`
-  return `$${Number(value).toFixed(2)}`
+  const numeric = Number(value) || 0
+  const absolute = Math.abs(numeric)
+  if (absolute >= 1000000) return `$${(numeric / 1000000).toFixed(1)}M`
+  if (absolute >= 1000) return `$${(numeric / 1000).toFixed(1)}K`
+  if (absolute >= 1) return `$${numeric.toFixed(2)}`
+  return `$${numeric.toFixed(3)}`
 }
 
 function timeAgo(dateStr) {
@@ -60,7 +63,11 @@ function MetricCard({ title, value, change, icon: Icon, color, prefix = '$', loa
             </div>
           </div>
           <p className="num-xl text-surface-900 dark:text-white">
-            {prefix}{typeof value === 'number' ? value.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : value}
+            {prefix}{typeof value === 'number'
+              ? (Math.abs(value) < 1
+                ? value.toFixed(3)
+                : value.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 }))
+              : value}
           </p>
           {change !== undefined && change !== null && (
             <div className="flex items-center gap-1.5 mt-3">
@@ -287,12 +294,12 @@ export default function Dashboard() {
       {/* Row 1: KPI Cards (8) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-4">
         <MetricCard title="Total Cost" value={data?.summary?.total_cost || 0} change={data?.summary?.change_percent} icon={DollarSign} color="brand" loading={loading} index={0} />
-        <MetricCard title="Daily Avg" value={data ? Math.round(data.summary.total_cost / data.summary.period_days) : 0} icon={Activity} color="cyan" loading={loading} index={1} />
-        <MetricCard title="Monthly Forecast" value={Math.round(forecastTotal)} icon={TrendingUp} color="purple" loading={loading} index={2} />
+        <MetricCard title="Daily Avg" value={data ? data.summary.total_cost / data.summary.period_days : 0} icon={Activity} color="cyan" loading={loading} index={1} />
+        <MetricCard title="Monthly Forecast" value={forecastTotal} icon={TrendingUp} color="purple" loading={loading} index={2} />
         <MetricCard title="Resources" value={data?.summary?.resource_count || 0} prefix="" icon={Server} color="teal" loading={loading} index={3} />
         <MetricCard title="Active Alerts" value={data?.alerts?.stats ? parseInt(data.alerts.stats.active) : 0} prefix="" icon={AlertTriangle} color="rose" loading={loading} index={4} />
         <MetricCard title="Recommendations" value={data?.recommendations?.summary?.active_count || 0} prefix="" icon={Lightbulb} color="amber" loading={loading} index={5} />
-        <MetricCard title="Savings Potential" value={Math.round(totalSavings)} icon={TrendingDown} color="emerald" loading={loading} index={6} />
+        <MetricCard title="Savings Potential" value={totalSavings} icon={TrendingDown} color="emerald" loading={loading} index={6} />
         <MetricCard title="Budget Usage" value={budgetUsageAvg} prefix="" icon={Wallet} color="orange" loading={loading} index={7} suffix="%" />
       </div>
 

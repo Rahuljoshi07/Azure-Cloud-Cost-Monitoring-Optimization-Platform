@@ -19,29 +19,31 @@ const { detectAnomalies } = require('./anomalyService');
 const { checkBudgetAlerts, sendAlert } = require('./notificationService');
 
 let _syncing = false;
+// Use same COST_SCALE as seed.js so mock sync keeps values small
+const COST_SCALE = 0.005;
 
 // ─── Cost ranges by Azure resource type (used for mock data generation) ──────
 
 const SERVICE_TYPE_MAP = {
-  'microsoft.compute/virtualmachines':       { service: 'Virtual Machines',    min: 5,   max: 85  },
-  'microsoft.sql/servers/databases':         { service: 'Azure SQL Database',  min: 3,   max: 45  },
-  'microsoft.storage/storageaccounts':       { service: 'Storage Accounts',    min: 0.5, max: 15  },
-  'microsoft.web/sites':                     { service: 'App Service',         min: 2,   max: 35  },
-  'microsoft.containerservice/managedclusters': { service: 'AKS',             min: 10,  max: 120 },
-  'microsoft.documentdb/databaseaccounts':   { service: 'Cosmos DB',           min: 5,   max: 60  },
-  'microsoft.web/sites/functions':           { service: 'Azure Functions',     min: 0.1, max: 8   },
-  'microsoft.network/loadbalancers':         { service: 'Load Balancer',       min: 1,   max: 12  },
-  'microsoft.network/virtualnetworks':       { service: 'Virtual Network',     min: 0.5, max: 5   },
-  'microsoft.insights/components':           { service: 'Azure Monitor',       min: 1,   max: 10  },
-  'microsoft.keyvault/vaults':               { service: 'Key Vault',           min: 0.1, max: 2   },
-  'microsoft.cache/redis':                   { service: 'Redis Cache',         min: 3,   max: 30  },
-  'microsoft.containerregistry/registries':  { service: 'Container Registry',  min: 1,   max: 8   },
-  'microsoft.cdn/profiles':                  { service: 'CDN',                 min: 0.5, max: 15  },
-  'microsoft.apimanagement/service':         { service: 'API Management',      min: 5,   max: 40  },
+  'microsoft.compute/virtualmachines':       { service: 'Virtual Machines',    min: 0.8 * COST_SCALE, max: 3.8 * COST_SCALE },
+  'microsoft.sql/servers/databases':         { service: 'Azure SQL Database',   min: 0.5 * COST_SCALE, max: 3.5 * COST_SCALE },
+  'microsoft.storage/storageaccounts':       { service: 'Storage Accounts',     min: 0.15 * COST_SCALE, max: 2.2 * COST_SCALE },
+  'microsoft.web/sites':                     { service: 'App Service',          min: 0.7 * COST_SCALE, max: 3.2 * COST_SCALE },
+  'microsoft.containerservice/managedclusters': { service: 'AKS',               min: 1.2 * COST_SCALE, max: 4.0 * COST_SCALE },
+  'microsoft.documentdb/databaseaccounts':    { service: 'Cosmos DB',            min: 0.9 * COST_SCALE, max: 3.8 * COST_SCALE },
+  'microsoft.web/sites/functions':            { service: 'Azure Functions',      min: 0.05 * COST_SCALE, max: 1.5 * COST_SCALE },
+  'microsoft.network/loadbalancers':          { service: 'Load Balancer',        min: 0.2 * COST_SCALE, max: 1.2 * COST_SCALE },
+  'microsoft.network/virtualnetworks':        { service: 'Virtual Network',      min: 0.1 * COST_SCALE, max: 0.75 * COST_SCALE },
+  'microsoft.insights/components':            { service: 'Azure Monitor',        min: 0.2 * COST_SCALE, max: 1.5 * COST_SCALE },
+  'microsoft.keyvault/vaults':                { service: 'Key Vault',            min: 0.05 * COST_SCALE, max: 0.5 * COST_SCALE },
+  'microsoft.cache/redis':                    { service: 'Redis Cache',          min: 0.8 * COST_SCALE, max: 2.8 * COST_SCALE },
+  'microsoft.containerregistry/registries':   { service: 'Container Registry',   min: 0.2 * COST_SCALE, max: 1.25 * COST_SCALE },
+  'microsoft.cdn/profiles':                   { service: 'CDN',                  min: 0.15 * COST_SCALE, max: 1.75 * COST_SCALE },
+  'microsoft.apimanagement/service':          { service: 'API Management',       min: 1.0 * COST_SCALE, max: 4.0 * COST_SCALE },
 };
 
 // Default cost range for resource types not in the map
-const DEFAULT_COST_RANGE = { service: 'Other', min: 1, max: 20 };
+const DEFAULT_COST_RANGE = { service: 'Other', min: 1 * COST_SCALE, max: 20 * COST_SCALE };
 
 // ─── Helpers for mock data generation ────────────────────────────────────────
 
@@ -67,7 +69,7 @@ function generateMockCost(resourceType, date) {
     cost *= 1.5 + Math.random();
   }
 
-  return Math.round(cost * 100) / 100;
+  return Math.round(cost * 10000) / 10000;
 }
 
 /**
@@ -264,8 +266,13 @@ async function runFullSync() {
     // 1 -- Sync Subscriptions
     report.steps.subscriptions = await syncSubscriptions();
 
-    // 2 -- Sync Resources
-    report.steps.resources = await syncResources();
+    // 2 -- Sync Resources (non-fatal if Resource Graph access is unavailable)
+    try {
+      report.steps.resources = await syncResources();
+    } catch (err) {
+      console.warn('[Sync] Resource sync skipped:', err.message);
+      report.steps.resources = { count: 0, skipped: true, reason: err.message };
+    }
 
     // 3 -- Sync Cost Records
     const days = parseInt(process.env.SYNC_COST_DAYS || '30');
@@ -319,14 +326,28 @@ async function syncSubscriptions() {
   const subs = await listSubscriptions();
   let upserted = 0;
 
-  for (const sub of subs) {
-    await query(
-      `INSERT INTO subscriptions (subscription_id, display_name, state)
-       VALUES ($1, $2, $3)
-       ON CONFLICT (subscription_id) DO UPDATE SET display_name = $2, state = $3`,
-      [sub.subscriptionId, sub.displayName, sub.state]
-    );
-    upserted++;
+  if (subs.length > 0) {
+    for (const sub of subs) {
+      await query(
+        `INSERT INTO subscriptions (subscription_id, display_name, state)
+         VALUES ($1, $2, $3)
+         ON CONFLICT (subscription_id) DO UPDATE SET display_name = $2, state = $3`,
+        [sub.subscriptionId, sub.displayName, sub.state]
+      );
+      upserted++;
+    }
+  } else {
+    // Fallback: ensure configured subscription IDs are present for downstream sync steps.
+    const configuredSubs = getSubscriptionIds();
+    for (const subId of configuredSubs) {
+      await query(
+        `INSERT INTO subscriptions (subscription_id, display_name, state)
+         VALUES ($1, $2, 'active')
+         ON CONFLICT (subscription_id) DO NOTHING`,
+        [subId, `Configured Subscription ${subId.slice(0, 8)}`]
+      );
+      upserted++;
+    }
   }
 
   console.log(`[Sync]   -> ${upserted} subscriptions upserted`);

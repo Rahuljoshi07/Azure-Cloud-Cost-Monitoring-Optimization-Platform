@@ -11,7 +11,6 @@ const REQUIRED_VARS = [
 const AZURE_VARS = [
   { key: 'AZURE_TENANT_ID', pattern: /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i, description: 'Azure Tenant ID (UUID format)' },
   { key: 'AZURE_CLIENT_ID', pattern: /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i, description: 'Azure Client ID (UUID format)' },
-  { key: 'AZURE_CLIENT_SECRET', minLength: 10, description: 'Azure Client Secret' },
   { key: 'AZURE_SUBSCRIPTION_IDS', pattern: /^[0-9a-f]{8}-/i, description: 'Azure Subscription IDs (comma-separated UUIDs)' },
 ];
 
@@ -43,6 +42,14 @@ function validateEnv() {
       } else if (pattern && !pattern.test(val)) {
         errors.push(`${key} has invalid format — ${description}`);
       }
+    }
+
+    const hasClientSecret = !!process.env.AZURE_CLIENT_SECRET;
+    if (hasClientSecret && process.env.AZURE_CLIENT_SECRET.length < 10) {
+      errors.push('AZURE_CLIENT_SECRET is too short (min 10 chars) — Azure Client Secret');
+    }
+    if (!hasClientSecret) {
+      warnings.push('AZURE_CLIENT_SECRET not set — using DefaultAzureCredential (Azure CLI / Managed Identity)');
     }
   } else {
     warnings.push('Running in MOCK mode — Azure credentials not validated');

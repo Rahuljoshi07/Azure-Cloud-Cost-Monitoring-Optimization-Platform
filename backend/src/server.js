@@ -214,7 +214,7 @@ const start = async () => {
 
   app.listen(PORT, () => {
     console.log(`\n  ╔══════════════════════════════════════════╗`);
-    console.log(`  ║     CloudFlow API Server                 ║`);
+    console.log(`  ║     Azure Cloud Cost Monitoring & Optimization API Server                 ║`);
     console.log(`  ╠══════════════════════════════════════════╣`);
     console.log(`  ║  Port:       ${String(PORT).padEnd(28)}║`);
     console.log(`  ║  Env:        ${(process.env.NODE_ENV || 'development').padEnd(28)}║`);

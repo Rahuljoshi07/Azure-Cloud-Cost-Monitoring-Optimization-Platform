@@ -1,0 +1,148 @@
+<mxfile host="app.diagrams.net" modified="2026-02-27T18:00:00.000Z" agent="draw.io" type="device">
+  <diagram id="pert-codebase" name="PERT Chart - New Codebase">
+    <mxGraphModel dx="1800" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="2400" pageHeight="1200" math="0" shadow="1">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- ====== TITLE ====== -->
+        <mxCell id="title" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;&lt;b&gt;PERT Chart — Making a New Codebase&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#1e293b;fontFamily=Inter;" vertex="1" parent="1">
+          <mxGeometry x="350" y="20" width="900" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- ====== LEGEND ====== -->
+        <mxCell id="leg1" value="🔴 Critical Path" style="text;html=1;fillColor=none;strokeColor=none;fontColor=#ef4444;fontSize=14;fontStyle=1;fontFamily=Inter;" vertex="1" parent="1">
+          <mxGeometry x="350" y="80" width="140" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg2" value="🟣 Frontend" style="text;html=1;fillColor=none;strokeColor=none;fontColor=#9333ea;fontSize=14;fontStyle=1;fontFamily=Inter;" vertex="1" parent="1">
+          <mxGeometry x="510" y="80" width="120" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg3" value="🟢 DevOps" style="text;html=1;fillColor=none;strokeColor=none;fontColor=#16a34a;fontSize=14;fontStyle=1;fontFamily=Inter;" vertex="1" parent="1">
+          <mxGeometry x="650" y="80" width="120" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- ====== START ====== -->
+        <mxCell id="start" value="&lt;font style=&quot;font-size: 22px;&quot;&gt;&lt;b&gt;🏁&lt;br&gt;START&lt;/b&gt;&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#10b981;strokeColor=#047857;strokeWidth=4;fontColor=#ffffff;shadow=1;fontFamily=Inter;" vertex="1" parent="1">
+          <mxGeometry x="60" y="350" width="140" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- ====== COLUMN 2: REQUIREMENTS ====== -->
+        <mxCell id="req" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;📋 Requirements&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px; color: #991b1b;&quot;&gt;1 Week&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#c8b7f8;strokeColor=#7c3aed;strokeWidth=4;shadow=1;fontFamily=Inter;fontColor=#2e1065;" vertex="1" parent="1">
+          <mxGeometry x="300" y="370" width="200" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- ====== COLUMN 3: ARCHITECTURE ====== -->
+        <mxCell id="arch" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;📐 Architecture&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px; color: #991b1b;&quot;&gt;1 Week&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#fcd438;strokeColor=#ca8a04;strokeWidth=4;shadow=1;fontFamily=Inter;fontColor=#422006;" vertex="1" parent="1">
+          <mxGeometry x="600" y="370" width="200" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- ====== COLUMN 4: 3 PARALLEL TRACKS ====== -->
+        <!-- Database (Critical - Top) -->
+        <mxCell id="db" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;💽 Database&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px; color: #991b1b;&quot;&gt;1 Week&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#92e35b;strokeColor=#16a34a;strokeWidth=4;shadow=1;fontFamily=Inter;fontColor=#14532d;" vertex="1" parent="1">
+          <mxGeometry x="920" y="170" width="200" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- UX/UI Design (Middle) -->
+        <mxCell id="ux" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;🎨 UX/UI Design&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px; color: #581c87;&quot;&gt;2 Weeks&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#fd9d9c;strokeColor=#ef4444;strokeWidth=4;shadow=1;fontFamily=Inter;fontColor=#450a0a;" vertex="1" parent="1">
+          <mxGeometry x="920" y="370" width="200" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Git & Repo (Bottom) -->
+        <mxCell id="git" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;🐙 Git &amp; Repo&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px; color: #14532d;&quot;&gt;1 Day&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#dcfce7;strokeColor=#16a34a;strokeWidth=4;shadow=1;fontFamily=Inter;fontColor=#14532d;" vertex="1" parent="1">
+          <mxGeometry x="920" y="570" width="200" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- ====== COLUMN 5 ====== -->
+        <!-- Core API (Critical - Top) -->
+        <mxCell id="api" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;⚙️ Core API&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px; color: #991b1b;&quot;&gt;2 Weeks&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#6ac6fc;strokeColor=#0284c7;strokeWidth=4;shadow=1;fontFamily=Inter;fontColor=#082f49;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="170" width="200" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Frontend Dev (Middle) -->
+        <mxCell id="fe" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;🖥️ Frontend Dev&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px; color: #581c87;&quot;&gt;3 Weeks&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#f3e8ff;strokeColor=#9333ea;strokeWidth=4;shadow=1;fontFamily=Inter;fontColor=#581c87;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="370" width="200" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Scaffolding (Bottom) -->
+        <mxCell id="scaf" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;🏗️ Scaffolding&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px; color: #14532d;&quot;&gt;3 Days&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#dcfce7;strokeColor=#16a34a;strokeWidth=4;shadow=1;fontFamily=Inter;fontColor=#14532d;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="570" width="200" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- ====== COLUMN 6: CONVERGENCE ====== -->
+        <!-- Integration (Critical) -->
+        <mxCell id="int" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;🧩 Integration&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px; color: #991b1b;&quot;&gt;1.5 Weeks&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#fab144;strokeColor=#ea580c;strokeWidth=4;shadow=1;fontFamily=Inter;fontColor=#451a03;" vertex="1" parent="1">
+          <mxGeometry x="1520" y="270" width="200" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- ====== COLUMN 7: QA ====== -->
+        <mxCell id="qa" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;🛡️ System QA&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 14px; color: #991b1b;&quot;&gt;2 Weeks&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#fa78b7;strokeColor=#db2777;strokeWidth=4;shadow=1;fontFamily=Inter;fontColor=#4a044e;" vertex="1" parent="1">
+          <mxGeometry x="1520" y="450" width="200" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- ====== FINISH ====== -->
+        <mxCell id="finish" value="&lt;font style=&quot;font-size: 22px;&quot;&gt;&lt;b&gt;🚀&lt;br&gt;RELEASE&lt;/b&gt;&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#10b981;strokeColor=#047857;strokeWidth=4;fontColor=#ffffff;shadow=1;fontFamily=Inter;" vertex="1" parent="1">
+          <mxGeometry x="1820" y="350" width="140" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- ====== CRITICAL PATH (THICK RED) ====== -->
+        <!-- ============================================================ -->
+        <mxCell id="e1" style="exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#ef4444;strokeWidth=5;rounded=1;endArrow=blockThin;endFill=1;endSize=12;" edge="1" source="start" target="req" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e2" style="exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#ef4444;strokeWidth=5;rounded=1;endArrow=blockThin;endFill=1;endSize=12;" edge="1" source="req" target="arch" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3" style="exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#ef4444;strokeWidth=5;rounded=1;endArrow=blockThin;endFill=1;endSize=12;" edge="1" source="arch" target="db" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4" style="exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#ef4444;strokeWidth=5;rounded=1;endArrow=blockThin;endFill=1;endSize=12;" edge="1" source="db" target="api" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e5" style="exitX=1;exitY=0.5;entryX=0;entryY=0;strokeColor=#ef4444;strokeWidth=5;rounded=1;endArrow=blockThin;endFill=1;endSize=12;" edge="1" source="api" target="int" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e6" style="exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#ef4444;strokeWidth=5;rounded=1;endArrow=blockThin;endFill=1;endSize=12;" edge="1" source="int" target="qa" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e7" style="exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#ef4444;strokeWidth=5;rounded=1;endArrow=blockThin;endFill=1;endSize=12;" edge="1" source="qa" target="finish" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- ============================================================ -->
+        <!-- ====== NON-CRITICAL (DASHED GRAY) ====== -->
+        <!-- ============================================================ -->
+        <!-- Arch -> UX -->
+        <mxCell id="e10" style="exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#94a3b8;strokeWidth=2;dashed=1;rounded=1;endArrow=blockThin;endFill=1;endSize=8;" edge="1" source="arch" target="ux" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- Arch -> Git -->
+        <mxCell id="e11" style="exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#94a3b8;strokeWidth=2;dashed=1;rounded=1;endArrow=blockThin;endFill=1;endSize=8;" edge="1" source="arch" target="git" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- UX -> FE -->
+        <mxCell id="e12" style="exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#94a3b8;strokeWidth=2;dashed=1;rounded=1;endArrow=blockThin;endFill=1;endSize=8;" edge="1" source="ux" target="fe" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- Git -> Scaf -->
+        <mxCell id="e13" style="exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#94a3b8;strokeWidth=2;dashed=1;rounded=1;endArrow=blockThin;endFill=1;endSize=8;" edge="1" source="git" target="scaf" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- FE -> INT -->
+        <mxCell id="e14" style="exitX=1;exitY=0.5;entryX=0;entryY=1;strokeColor=#94a3b8;strokeWidth=2;dashed=1;rounded=1;endArrow=blockThin;endFill=1;endSize=8;" edge="1" source="fe" target="int" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- Scaf -> QA -->
+        <mxCell id="e15" style="exitX=1;exitY=0.5;entryX=0;entryY=1;strokeColor=#94a3b8;strokeWidth=2;dashed=1;rounded=1;endArrow=blockThin;endFill=1;endSize=8;" edge="1" source="scaf" target="qa" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- ====== CRITICAL PATH LABEL ====== -->
+        <mxCell id="cp_label" value="&lt;font style=&quot;font-size: 16px; color: #ef4444;&quot;&gt;&lt;b&gt;🚩 Critical Path:&lt;/b&gt; Requirements → Architecture → Database → Core API → Integration → System QA → Release&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;fillColor=none;strokeColor=none;fontFamily=Inter;" vertex="1" parent="1">
+          <mxGeometry x="60" y="750" width="1100" height="40" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
